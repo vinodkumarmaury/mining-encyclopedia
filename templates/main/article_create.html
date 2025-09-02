@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Article - GATE Mining Prep{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card p-4">
+                <h4>Create Article</h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="mt-3">
+                        <button class="btn btn-primary">Create</button>
+                        <a href="{% url 'main:dashboard' %}" class="btn btn-secondary ms-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

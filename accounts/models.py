@@ -5,6 +5,12 @@ from django.dispatch import receiver
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    ROLE_CHOICES = [
+        ('student', 'Student'),
+        ('professor', 'Professor'),
+        ('admin', 'Admin'),
+    ]
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
     phone = models.CharField(max_length=15, blank=True)
     college = models.CharField(max_length=200, blank=True)
     graduation_year = models.IntegerField(null=True, blank=True)
@@ -30,4 +36,9 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
+    # Ensure saving does not raise if profile is missing (e.g., older users)
+    try:
+        instance.userprofile.save()
+    except UserProfile.DoesNotExist:
+        # Create a profile for existing user if missing
+        UserProfile.objects.create(user=instance)

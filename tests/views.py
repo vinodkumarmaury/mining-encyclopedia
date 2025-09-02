@@ -12,6 +12,8 @@ from datetime import timedelta
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import io
+from django.contrib.auth.decorators import user_passes_test
+from .forms import MockTestCreateForm
 
 def test_list(request):
     tests = MockTest.objects.filter(is_active=True)
@@ -216,6 +218,28 @@ def update_leaderboard(user):
             leaderboard.tests_completed = tests_completed
             leaderboard.average_percentage = average_percentage
             leaderboard.save()
+
+
+def is_professor(user):
+    try:
+        return user.userprofile.role == 'professor' or user.is_staff
+    except Exception:
+        return user.is_staff
+
+
+@login_required
+@user_passes_test(is_professor)
+def create_test(request):
+    if request.method == 'POST':
+        form = MockTestCreateForm(request.POST)
+        if form.is_valid():
+            mt = form.save()
+            messages.success(request, 'Mock test created successfully!')
+            return redirect('tests:test_detail', test_id=mt.id)
+    else:
+        form = MockTestCreateForm()
+
+    return render(request, 'tests/create_test.html', {'form': form})
 
 @login_required
 def export_pdf(request, attempt_id):

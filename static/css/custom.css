@@ -1,0 +1,4 @@
+/* Custom site styles */
+body { background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%); }
+.card.professor { border-left: 6px solid #0d6efd; }
+.profile-avatar { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }

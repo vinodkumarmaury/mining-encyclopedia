@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics Dashboard - GATE Mining Prep{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h3 class="mb-3">Analytics Dashboard</h3>
+  <div class="row">
+    <div class="col-md-3" data-aos="fade-up">
+      <div class="card p-3 text-center">
+        <h6>Total Users</h6>
+        <h3>{{ total_users }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+      <div class="card p-3 text-center">
+        <h6>Published Articles</h6>
+        <h3>{{ total_articles }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+      <div class="card p-3 text-center">
+        <h6>Active Tests</h6>
+        <h3>{{ total_tests }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+      <div class="card p-3 text-center">
+        <h6>Completed Attempts</h6>
+        <h3>{{ total_attempts }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-8" data-aos="fade-right">
+      <div class="card p-3">
+        <h6>Attempts Over Time</h6>
+        <canvas id="attemptsChart" height="200"></canvas>
+      </div>
+    </div>
+    <div class="col-md-4" data-aos="fade-left">
+      <div class="card p-3">
+        <h6>Popular Articles</h6>
+        <ul class="list-group list-group-flush">
+          {% for a in popular_articles %}
+          <li class="list-group-item">{{ a.title }}</li>
+          {% empty %}
+          <li class="list-group-item">No articles</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-6" data-aos="zoom-in">
+      <div class="card p-3">
+        <h6>Popular Tests</h6>
+        <ul class="list-group list-group-flush">
+          {% for t in popular_tests %}
+          <li class="list-group-item">{{ t.title }} <span class="badge bg-secondary float-end">{{ t.attempt_count }}</span></li>
+          {% empty %}
+          <li class="list-group-item">No tests</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6" data-aos="zoom-in">
+      <div class="card p-3">
+        <h6>Recent Users</h6>
+        <ul class="list-group list-group-flush">
+          {% for u in recent_users %}
+          <li class="list-group-item">{{ u.username }} <small class="text-muted">{{ u.date_joined|date:'Y-m-d' }}</small></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// fetch attempts/activity and render charts
+fetch('{% url "analytics:performance_data" %}')
+  .then(r => r.json())
+  .then(data => {
+    // create a dummy attempts-over-time from activity endpoint
+    fetch('{% url "analytics:activity_data" %}')
+      .then(r => r.json())
+      .then(act => {
+        const labels = act.activity.map(x=>x.date);
+        const attempts = act.activity.map(x=>x.attempts);
+        const ctx = document.getElementById('attemptsChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: { labels: labels, datasets:[{ label:'Attempts', data:attempts, backgroundColor:'#4e73df' }] },
+          options: { responsive:true, maintainAspectRatio:false }
+        });
+      });
+  });
+</script>
+{% endblock %}

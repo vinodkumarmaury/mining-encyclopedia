@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - GATE Mining Prep{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card text-center p-4">
+        {% if user_profile.profile_picture %}
+          <img src="{{ user_profile.profile_picture.url }}" class="profile-avatar mb-3">
+        {% else %}
+          <div class="profile-avatar bg-secondary d-flex align-items-center justify-content-center text-white mb-3">{{ user.username|slice:":1"|upper }}</div>
+        {% endif %}
+        <h5>{{ user.get_full_name|default:user.username }}</h5>
+        <p class="text-muted mb-1">{{ user_profile.college }}</p>
+        <p class="text-muted small">Role: {{ user_profile.get_role_display }}</p>
+        <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary btn-sm mt-2">Edit Profile</a>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card p-3">
+        <h5>Activity</h5>
+        <div id="profileCharts" style="height:220px;"></div>
+        <hr>
+        <h6>Recent Tests</h6>
+        <ul class="list-group">
+          {% for t in recent_tests %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ t.mock_test.title }}
+            <span class="badge bg-primary">{{ t.percentage|floatformat:1 }}%</span>
+          </li>
+          {% empty %}
+          <li class="list-group-item">No recent tests</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+fetch('/analytics/api/performance/')
+  .then(r => r.json())
+  .then(data => {
+    const ctx = document.createElement('canvas');
+    document.getElementById('profileCharts').appendChild(ctx);
+    new Chart(ctx.getContext('2d'), {
+      type: 'line',
+      data: { labels: data.dates, datasets:[{ label:'Score', data:data.scores, borderColor:'#007bff'}] },
+      options: { responsive:true, maintainAspectRatio:false }
+    });
+  });
+</script>
+{% endblock %}

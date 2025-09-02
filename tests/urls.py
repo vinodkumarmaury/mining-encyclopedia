@@ -12,4 +12,5 @@ urlpatterns = [
     path('results/<int:attempt_id>/', views.test_results, name='test_results'),
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('export/<int:attempt_id>/pdf/', views.export_pdf, name='export_pdf'),
+    path('create/', views.create_test, name='create_test'),
 ]

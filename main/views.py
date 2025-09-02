@@ -5,6 +5,7 @@ from django.db.models import Q, Count, Avg
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from .models import Article, Subject, Topic, Bookmark, Note
+from .forms import ArticleCreateForm
 from tests.models import TestAttempt, MockTest
 from accounts.models import UserProfile
 import json
@@ -52,6 +53,30 @@ def dashboard(request):
         'recent_activity': recent_activity,
     }
     return render(request, 'main/dashboard.html', context)
+
+
+@login_required
+def article_create(request):
+    # Only professors or staff can create articles
+    try:
+        if request.user.userprofile.role != 'professor' and not request.user.is_staff:
+            messages.error(request, 'You do not have permission to create articles.')
+            return redirect('main:dashboard')
+    except Exception:
+        return redirect('main:dashboard')
+
+    if request.method == 'POST':
+        form = ArticleCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.author = request.user
+            article.save()
+            messages.success(request, 'Article created successfully.')
+            return redirect('main:article_detail', slug=article.slug)
+    else:
+        form = ArticleCreateForm()
+
+    return render(request, 'main/article_create.html', {'form': form})
 
 def article_list(request):
     articles = Article.objects.filter(is_published=True)

@@ -10,6 +10,44 @@
             <p class="text-muted">Track your progress and continue your GATE preparation journey</p>
         </div>
     </div>
+
+    {% if user_profile.role == 'professor' %}
+    <!-- Professor quick actions -->
+    <div class="row mb-4" data-aos="fade-up">
+        <div class="col-12">
+            <div class="card p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">Professor Tools</h5>
+                        <p class="mb-0 text-muted">Quick access to create content and view student performance.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        {% url 'main:article_create' as article_create_url %}
+                        {% if article_create_url %}
+                            <a href="{{ article_create_url }}" class="btn btn-primary btn-sm animate__animated animate__fadeInUp">Create Article</a>
+                        {% else %}
+                            <button class="btn btn-primary btn-sm" disabled>Create Article</button>
+                        {% endif %}
+
+                        {% url 'tests:create_test' as create_test_url %}
+                        {% if create_test_url %}
+                            <a href="{{ create_test_url }}" class="btn btn-outline-primary btn-sm animate__animated animate__fadeInUp">Create Mock Test</a>
+                        {% else %}
+                            <button class="btn btn-outline-primary btn-sm" disabled>Create Mock Test</button>
+                        {% endif %}
+
+                        {% url 'analytics:dashboard' as analytics_url %}
+                        {% if analytics_url %}
+                            <a href="{{ analytics_url }}" class="btn btn-outline-secondary btn-sm animate__animated animate__fadeInUp">View Student Performance</a>
+                        {% else %}
+                            <button class="btn btn-outline-secondary btn-sm" disabled>View Student Performance</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     
     <!-- Stats Cards -->
     <div class="row g-4 mb-5">
