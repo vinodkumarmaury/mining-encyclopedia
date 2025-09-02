@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ subject.name }}</h1>
+<p>{{ subject.description }}</p>
+<h2>Topics</h2>
+<ul>
+  {% for topic in topics %}
+    <li>{{ topic.name }}</li>
+  {% empty %}
+    <li>No topics found.</li>
+  {% endfor %}
+</ul>
+<h2>Articles</h2>
+<ul>
+  {% for article in articles %}
+    <li>{{ article.title }}</li>
+  {% empty %}
+    <li>No articles found.</li>
+  {% endfor %}
+</ul>
+<h2>Tests</h2>
+<ul>
+  {% for test in tests %}
+    <li>{{ test.title }}</li>
+  {% empty %}
+    <li>No tests found.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

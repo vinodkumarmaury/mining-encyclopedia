@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Subject List</h1>
+<ul>
+  {% for subject in subjects %}
+    <li>
+      <strong>{{ subject.name }}</strong> - Created on: {{ subject.created_at|date:"F j, Y" }}
+      <br>
+      {{ subject.description }}
+    </li>
+  {% empty %}
+    <li>No subjects found.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

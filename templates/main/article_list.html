@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}Articles - GATE Mining Prep{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Articles</h2>
+            <p class="text-muted">Comprehensive study materials for GATE Mining Engineering</p>
+        </div>
+    </div>
+    
+    <!-- Search and Filters -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <div class="position-relative">
+                                <input type="text" class="form-control" name="search" 
+                                       placeholder="Search articles..." value="{{ search_query }}"
+                                       id="searchInput">
+                                <div id="searchResults" class="search-results"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="subject" class="form-select">
+                                <option value="">All Subjects</option>
+                                {% for subject in subjects %}
+                                <option value="{{ subject.id }}" {% if current_subject == subject.id %}selected{% endif %}>
+                                    {{ subject.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="difficulty" class="form-select">
+                                <option value="">All Difficulties</option>
+                                {% for value, label in difficulties %}
+                                <option value="{{ value }}" {% if current_difficulty == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Articles Grid -->
+    <div class="row g-4">
+        {% for article in articles %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100">
+                {% if article.featured_image %}
+                    <img src="{{ article.featured_image.url }}" class="card-img-top" alt="{{ article.title }}">
+                {% else %}
+                    <img src="https://images.pexels.com/photos/256455/pexels-photo-256455.jpeg" 
+                         class="card-img-top" alt="{{ article.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="badge bg-primary">{{ article.topic.subject.name }}</span>
+                        <span class="badge bg-{{ article.difficulty|yesno:'danger,warning,success' }}">
+                            {{ article.get_difficulty_display }}
+                        </span>
+                    </div>
+                    <h5 class="card-title">{{ article.title }}</h5>
+                    <p class="card-text">{{ article.excerpt|truncatewords:20 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-eye"></i> {{ article.views }} views
+                        </small>
+                        <small class="text-muted">{{ article.created_at|date:"M d" }}</small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'main:article_detail' article.slug %}" class="btn btn-primary btn-sm">
+                            Read Article
+                        </a>
+                        {% if user.is_authenticated %}
+                        <button class="btn btn-outline-secondary btn-sm bookmark-btn" 
+                                data-article-id="{{ article.id }}">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if not articles %}
+    <div class="text-center py-5">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h4>No articles found</h4>
+        <p class="text-muted">Try adjusting your search criteria</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Real-time search
+let searchTimeout;
+$('#searchInput').on('input', function() {
+    clearTimeout(searchTimeout);
+    const query = $(this).val();
+    
+    if (query.length > 2) {
+        searchTimeout = setTimeout(() => {
+            $.get('/articles/search/', { q: query })
+                .done(function(data) {
+                    const results = $('#searchResults');
+                    results.empty();
+                    
+                    if (data.results.length > 0) {
+                        data.results.forEach(article => {
+                            results.append(`
+                                <div class="search-result-item" onclick="window.location.href='${article.url}'">
+                                    <h6 class="mb-1">${article.title}</h6>
+                                    <small class="text-muted">${article.topic} • ${article.difficulty}</small>
+                                </div>
+                            `);
+                        });
+                        results.show();
+                    } else {
+                        results.hide();
+                    }
+                });
+        }, 300);
+    } else {
+        $('#searchResults').hide();
+    }
+});
+
+// Hide search results when clicking outside
+$(document).on('click', function(e) {
+    if (!$(e.target).closest('#searchInput, #searchResults').length) {
+        $('#searchResults').hide();
+    }
+});
+
+// Bookmark functionality
+$('.bookmark-btn').on('click', function() {
+    const articleId = $(this).data('article-id');
+    const btn = $(this);
+    
+    $.post(`/bookmark/${articleId}/`, {
+        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()
+    })
+    .done(function(data) {
+        if (data.bookmarked) {
+            btn.removeClass('btn-outline-secondary').addClass('btn-warning');
+            btn.find('i').addClass('fas').removeClass('far');
+        } else {
+            btn.removeClass('btn-warning').addClass('btn-outline-secondary');
+            btn.find('i').addClass('far').removeClass('fas');
+        }
+    });
+});
+</script>
+{% endblock %}

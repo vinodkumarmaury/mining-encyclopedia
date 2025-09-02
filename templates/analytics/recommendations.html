@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Recommendations - GATE Mining Prep{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Personalized Recommendations</h2>
+            <p class="text-muted">Based on your performance analysis</p>
+        </div>
+    </div>
+    
+    {% if weak_subjects %}
+    <div class="row mb-4">
+        <div class="col">
+            <div class="alert alert-info">
+                <h5><i class="fas fa-lightbulb"></i> Areas for Improvement</h5>
+                <p class="mb-2">Based on your test performance, we recommend focusing on:</p>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for subject in weak_subjects %}
+                    <span class="badge bg-warning text-dark">{{ subject.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Recommended Articles -->
+    <div class="row mb-5">
+        <div class="col">
+            <h4 class="mb-3">Recommended Articles</h4>
+            <div class="row g-4">
+                {% for article in recommended_articles %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary">{{ article.topic.subject.name }}</span>
+                                <span class="badge bg-info">Recommended</span>
+                            </div>
+                            <h6 class="card-title">{{ article.title }}</h6>
+                            <p class="card-text">{{ article.excerpt|truncatewords:15 }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'main:article_detail' article.slug %}" class="btn btn-primary btn-sm">
+                                Read Article
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recommended Tests -->
+    <div class="row">
+        <div class="col">
+            <h4 class="mb-3">Recommended Practice Tests</h4>
+            <div class="row g-4">
+                {% for test in recommended_tests %}
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary">{{ test.subject.name }}</span>
+                                <span class="badge bg-warning">Practice More</span>
+                            </div>
+                            <h6 class="card-title">{{ test.title }}</h6>
+                            <p class="card-text">{{ test.description|truncatewords:15 }}</p>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <strong>{{ test.question_count }}</strong>
+                                    <br><small class="text-muted">Questions</small>
+                                </div>
+                                <div class="col-4">
+                                    <strong>{{ test.duration_minutes }}m</strong>
+                                    <br><small class="text-muted">Duration</small>
+                                </div>
+                                <div class="col-4">
+                                    <strong>{{ test.total_marks }}</strong>
+                                    <br><small class="text-muted">Marks</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'tests:start_test' test.id %}" class="btn btn-primary btn-sm">
+                                Take Test
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    {% if not weak_subjects %}
+    <div class="text-center py-5">
+        <i class="fas fa-trophy fa-3x text-success mb-3"></i>
+        <h4>Great Performance!</h4>
+        <p class="text-muted">You're doing well across all subjects. Keep practicing to maintain your momentum!</p>
+        <a href="{% url 'tests:test_list' %}" class="btn btn-primary">Take More Tests</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

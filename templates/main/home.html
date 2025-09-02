@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Master GATE Mining Engineering</h1>
+                <p class="lead mb-4">Comprehensive preparation platform with expert-curated content, mock tests, and personalized analytics to ace your GATE Mining exam.</p>
+                {% if not user.is_authenticated %}
+                    <div class="d-flex gap-3">
+                        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">Get Started</a>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">Login</a>
+                    </div>
+                {% else %}
+                    <a href="{% url 'main:dashboard' %}" class="btn btn-light btn-lg">Go to Dashboard</a>
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg" 
+                     alt="GATE Preparation" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col">
+                <h2 class="fw-bold">Why Choose Our Platform?</h2>
+                <p class="text-muted">Everything you need to excel in GATE Mining Engineering</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h5>Expert Articles</h5>
+                    <p class="text-muted">100+ comprehensive articles covering all GATE Mining topics with detailed explanations and examples.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h5>Mock Tests</h5>
+                    <p class="text-muted">50+ practice tests with detailed analysis, performance tracking, and instant feedback.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h5>Performance Analytics</h5>
+                    <p class="text-muted">Advanced analytics dashboard to track your progress and identify areas for improvement.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Content -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h3 class="fw-bold">Featured Articles</h3>
+                <p class="text-muted">Start with these popular articles</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for article in featured_articles %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    {% if article.featured_image %}
+                        <img src="{{ article.featured_image.url }}" class="card-img-top" alt="{{ article.title }}">
+                    {% else %}
+                        <img src="https://images.pexels.com/photos/159775/library-education-study-books-159775.jpeg" 
+                             class="card-img-top" alt="{{ article.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-primary mb-2">{{ article.topic.subject.name }}</span>
+                        <h5 class="card-title">{{ article.title }}</h5>
+                        <p class="card-text">{{ article.excerpt|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-{{ article.difficulty|yesno:'danger,warning,success' }}">
+                                {{ article.get_difficulty_display }}
+                            </span>
+                            <small class="text-muted">{{ article.views }} views</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'main:article_detail' article.slug %}" class="btn btn-primary btn-sm">Read Article</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'main:article_list' %}" class="btn btn-outline-primary">View All Articles</a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Tests -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h3 class="fw-bold">Featured Mock Tests</h3>
+                <p class="text-muted">Test your knowledge with these popular tests</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for test in featured_tests %}
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">{{ test.title }}</h5>
+                            <span class="badge bg-{{ test.difficulty|yesno:'danger,warning,success' }}">
+                                {{ test.get_difficulty_display }}
+                            </span>
+                        </div>
+                        <p class="card-text">{{ test.description|truncatewords:15 }}</p>
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <strong>{{ test.question_count }}</strong>
+                                <br><small class="text-muted">Questions</small>
+                            </div>
+                            <div class="col-4">
+                                <strong>{{ test.duration_minutes }}m</strong>
+                                <br><small class="text-muted">Duration</small>
+                            </div>
+                            <div class="col-4">
+                                <strong>{{ test.total_marks }}</strong>
+                                <br><small class="text-muted">Marks</small>
+                            </div>
+                        </div>
+                        <a href="{% url 'tests:test_detail' test.id %}" class="btn btn-primary w-100">Start Test</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'tests:test_list' %}" class="btn btn-outline-primary">View All Tests</a>
+        </div>
+    </div>
+</section>
+
+<!-- Subjects Overview -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h3 class="fw-bold">Explore Subjects</h3>
+                <p class="text-muted">Comprehensive coverage of all GATE Mining Engineering topics</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for subject in subjects %}
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-book text-primary mb-3" style="font-size: 2rem;"></i>
+                        <h5 class="card-title">{{ subject.name }}</h5>
+                        <p class="card-text">{{ subject.description|truncatewords:15 }}</p>
+                        <a href="{% url 'main:subject_detail' subject.id %}" class="btn btn-outline-primary">Explore</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
