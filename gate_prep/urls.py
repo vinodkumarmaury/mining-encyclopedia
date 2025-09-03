@@ -64,9 +64,32 @@ def env_check(request):
     
     return JsonResponse(env_info, indent=2)
 
+def collectstatic_force(request):
+    """Force collect static files - emergency tool"""
+    try:
+        from django.core.management import call_command
+        from io import StringIO
+        
+        output = StringIO()
+        call_command('collectstatic', '--noinput', '--clear', verbosity=2, stdout=output)
+        result = output.getvalue()
+        
+        return JsonResponse({
+            'status': 'success',
+            'output': result[:1000],  # Limit output size
+            'message': 'Static files collected successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'error': str(e)
+        }, status=500)
+
 urlpatterns = [
     path('health/', health_check, name='health_check'),
     path('env/', env_check, name='env_check'),
+    path('collectstatic/', collectstatic_force, name='collectstatic_force'),
     path('admin/', admin.site.urls),
     path('profile/', RedirectView.as_view(url='/accounts/profile/', permanent=False)),
     path('', include('main.urls', namespace='main')),

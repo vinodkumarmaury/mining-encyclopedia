@@ -15,6 +15,31 @@ def test_simple(request):
     """Simple test endpoint to check if views work"""
     return HttpResponse("✅ Main app views working correctly!")
 
+def test_admin(request):
+    """Test admin functionality without static files"""
+    try:
+        from django.contrib.admin import site
+        from django.contrib.auth.models import User
+        
+        admin_info = {
+            'admin_registered_models': len(site._registry),
+            'user_count': User.objects.count(),
+            'superuser_count': User.objects.filter(is_superuser=True).count(),
+        }
+        
+        html = f"""
+        <h1>🔧 Admin Test</h1>
+        <p>Admin registry: {admin_info['admin_registered_models']} models</p>
+        <p>Total users: {admin_info['user_count']}</p>
+        <p>Superusers: {admin_info['superuser_count']}</p>
+        <p><a href="/">← Back to Home</a></p>
+        """
+        
+        return HttpResponse(html)
+        
+    except Exception as e:
+        return HttpResponse(f"Admin test error: {str(e)}", status=500)
+
 def debug_db_status(request):
     """Quick database debug endpoint"""
     try:
