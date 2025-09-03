@@ -2,6 +2,9 @@
 # exit on error
 set -o errexit
 
+# Upgrade pip to latest version
+pip install --upgrade pip
+
 # Install dependencies
 pip install -r requirements.txt
 
@@ -16,4 +19,4 @@ python manage.py migrate
 # python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@example.com', 'adminpass123')"
 
 # Load sample data if needed (optional)
-python load_sample_data.py
+python load_sample_data.py || echo "Sample data loading failed, continuing..."

@@ -3,6 +3,7 @@ services:
     name: gate-prep-web
     env: python
     plan: free
+    region: oregon
     buildCommand: "./build.sh"
     startCommand: "gunicorn gate_prep.wsgi:application"
     disk:
@@ -20,3 +21,5 @@ services:
         value: "gate_prep.settings"
       - key: PYTHONUNBUFFERED
         value: "1"
+      - key: PYTHON_VERSION
+        value: "3.12.5"
