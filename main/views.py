@@ -11,8 +11,79 @@ from accounts.models import UserProfile
 import json
 from django.utils import timezone
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, HttpResponse
+from django.db.models import Q, Count, Avg
+from django.contrib import messages
+from django.views.decorators.http import require_POST
+from .models import Article, Subject, Topic, Bookmark, Note
+from .forms import ArticleCreateForm
+from tests.models import TestAttempt, MockTest
+from accounts.models import UserProfile
+import json
+from django.utils import timezone
+
+def force_migrate(request):
+    """Force run migrations - ONLY use in deployment emergency"""
+    if request.method != 'POST':
+        return HttpResponse("""
+            <h1>🚨 Force Migration Tool</h1>
+            <p><strong>WARNING:</strong> This will force run Django migrations.</p>
+            <p>Only use if normal deployment migration failed.</p>
+            <form method="post">
+                <button type="submit" style="background: red; color: white; padding: 10px;">
+                    FORCE RUN MIGRATIONS
+                </button>
+            </form>
+            <p><a href="/">← Back to Home</a></p>
+        """)
+    
+    try:
+        from django.core.management import call_command
+        from io import StringIO
+        import sys
+        
+        # Capture output
+        output = StringIO()
+        
+        # Run migrations
+        call_command('migrate', verbosity=2, stdout=output)
+        migration_output = output.getvalue()
+        
+        # Try to load sample data
+        try:
+            import subprocess
+            import os
+            script_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'load_sample_data.py')
+            result = subprocess.run([sys.executable, script_path], 
+                                  capture_output=True, text=True, timeout=60)
+            sample_data_output = result.stdout + result.stderr
+        except Exception as e:
+            sample_data_output = f"Sample data loading failed: {str(e)}"
+        
+        return HttpResponse(f"""
+            <h1>✅ Migration Complete</h1>
+            <h2>Migration Output:</h2>
+            <pre>{migration_output}</pre>
+            <h2>Sample Data Output:</h2>
+            <pre>{sample_data_output}</pre>
+            <p><a href="/">🏠 Go to Home Page</a></p>
+        """)
+        
+    except Exception as e:
+        return HttpResponse(f"""
+            <h1>❌ Migration Failed</h1>
+            <p>Error: {str(e)}</p>
+            <p><a href="/">← Back to Home</a></p>
+        """, status=500)
+
 def home(request):
     try:
+        # Quick check if tables exist
+        Subject.objects.count()
+        
+        # If we get here, tables exist
         featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
         featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
         subjects = Subject.objects.all()[:6]
@@ -24,26 +95,30 @@ def home(request):
         }
         return render(request, 'main/home.html', context)
     except Exception as e:
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error(f"Error in home view: {str(e)}")
-        
-        # If database tables don't exist, show a helpful message
         if "does not exist" in str(e):
-            return HttpResponse("""
-                <h1>Database Setup in Progress</h1>
-                <p>The database tables are being created. Please wait a moment and refresh the page.</p>
-                <p>If this message persists, the database migrations may not have completed successfully.</p>
-                <a href="/">Refresh Page</a>
+            # Tables don't exist, show migration needed message
+            return HttpResponse(f"""
+                <h1>🔧 Database Setup Required</h1>
+                <p><strong>Database Error:</strong> {str(e)}</p>
+                <p>The database tables don't exist yet. Please run migrations:</p>
+                <ol>
+                    <li>Go to your Render service dashboard</li>
+                    <li>Click on "Shell" tab</li>
+                    <li>Run: <code>python manage.py migrate</code></li>
+                    <li>Run: <code>python load_sample_data.py</code></li>
+                    <li>Refresh this page</li>
+                </ol>
+                <p><strong>Emergency Option:</strong> <a href="/force-migrate/">🚨 Force Migration</a></p>
+                <p><a href="/">🔄 Refresh Page</a></p>
+                <hr>
+                <p><small>Error details: {str(e)}</small></p>
             """)
-        
-        # For other errors, return empty context
-        context = {
-            'featured_articles': [],
-            'featured_tests': [],
-            'subjects': [],
-        }
-        return render(request, 'main/home.html', context)
+        else:
+            # Other error
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error in home view: {str(e)}")
+            return HttpResponse(f"Application Error: {str(e)}", status=500)
 
 @login_required
 def dashboard(request):

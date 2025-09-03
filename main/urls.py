@@ -53,6 +53,7 @@ app_name = 'main'
 urlpatterns = [
     path('', views.home, name='home'),
     path('debug-db/', debug_db, name='debug_db'),
+    path('force-migrate/', views.force_migrate, name='force_migrate'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('articles/', views.article_list, name='article_list'),
     path('articles/create/', views.article_create, name='article_create'),
