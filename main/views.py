@@ -18,55 +18,26 @@ def test_simple(request):
 def debug_db_status(request):
     """Quick database debug endpoint"""
     try:
+        # Test basic database connection
         from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            
+        # Test if we can import models
+        count = Subject.objects.count()
         
-        info = {
-            'database_connected': False,
-            'tables_exist': {},
-            'counts': {},
-            'errors': []
-        }
-        
-        # Test connection
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT version()")
-                version = cursor.fetchone()
-                info['database_connected'] = True
-                info['database_version'] = version[0][:50] if version else 'Unknown'
-        except Exception as e:
-            info['errors'].append(f"Connection error: {str(e)}")
-        
-        # Test each model
-        models_to_test = [
-            ('Subject', Subject),
-            ('Topic', Topic), 
-            ('Article', Article),
-        ]
-        
-        for name, model in models_to_test:
-            try:
-                count = model.objects.count()
-                info['tables_exist'][name] = True
-                info['counts'][name] = count
-            except Exception as e:
-                info['tables_exist'][name] = False
-                info['errors'].append(f"{name}: {str(e)}")
-        
-        # Also test MockTest but handle import error
-        try:
-            from tests.models import MockTest
-            count = MockTest.objects.count()
-            info['tables_exist']['MockTest'] = True
-            info['counts']['MockTest'] = count
-        except Exception as e:
-            info['tables_exist']['MockTest'] = False
-            info['errors'].append(f"MockTest: {str(e)}")
-        
-        return JsonResponse(info, indent=2)
+        return JsonResponse({
+            'status': 'success',
+            'database_connected': True,
+            'subject_count': count,
+            'message': 'Database working correctly'
+        })
         
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({
+            'status': 'error',
+            'error': str(e)
+        }, status=500)
 
 def home(request):
     """Home page view - simplified for debugging"""
