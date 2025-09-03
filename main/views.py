@@ -32,6 +32,13 @@ def test_admin(request):
         <p>Admin registry: {admin_info['admin_registered_models']} models</p>
         <p>Total users: {admin_info['user_count']}</p>
         <p>Superusers: {admin_info['superuser_count']}</p>
+        <hr>
+        <h3>🎯 Admin Access Options:</h3>
+        <ol>
+            <li><strong>Register via Frontend:</strong> <a href="/accounts/register/">Register as Admin</a> (use role: Admin)</li>
+            <li><strong>Login:</strong> <a href="/accounts/login/">Login</a> once registered</li>
+            <li><strong>Admin Panel:</strong> <a href="/admin/">Access Admin Panel</a></li>
+        </ol>
         <p><a href="/">← Back to Home</a></p>
         """
         
@@ -39,6 +46,71 @@ def test_admin(request):
         
     except Exception as e:
         return HttpResponse(f"Admin test error: {str(e)}", status=500)
+
+def create_emergency_admin(request):
+    """Emergency admin creation endpoint - for production deployment"""
+    try:
+        from django.contrib.auth.models import User
+        from accounts.models import UserProfile
+        
+        # Check if any superuser exists
+        if User.objects.filter(is_superuser=True).exists():
+            return HttpResponse("""
+                <h1>❌ Admin Already Exists</h1>
+                <p>A superuser already exists in the system.</p>
+                <p><a href="/admin/">Go to Admin Panel</a></p>
+                <p><a href="/">← Back to Home</a></p>
+            """)
+        
+        if request.method == 'POST':
+            username = request.POST.get('username', '').strip()
+            password = request.POST.get('password', '').strip()
+            email = request.POST.get('email', '').strip()
+            
+            if len(username) < 3 or len(password) < 6:
+                return HttpResponse("""
+                    <h1>❌ Invalid Input</h1>
+                    <p>Username must be at least 3 characters, password at least 6 characters.</p>
+                    <p><a href="/create-admin/">← Try Again</a></p>
+                """)
+            
+            # Create superuser
+            user = User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password
+            )
+            
+            # Create profile
+            UserProfile.objects.get_or_create(
+                user=user,
+                defaults={'role': 'admin'}
+            )
+            
+            return HttpResponse(f"""
+                <h1>✅ Emergency Admin Created!</h1>
+                <p><strong>Username:</strong> {username}</p>
+                <p><strong>Email:</strong> {email}</p>
+                <p>You can now login to the admin panel.</p>
+                <p><a href="/admin/">Go to Admin Panel</a></p>
+                <p><a href="/">← Back to Home</a></p>
+            """)
+        
+        # Show form
+        return HttpResponse("""
+            <h1>🚨 Emergency Admin Creation</h1>
+            <p><strong>Warning:</strong> This creates a superuser account. Only use if no admin exists.</p>
+            <form method="post">
+                <p><label>Username: <input type="text" name="username" required minlength="3"></label></p>
+                <p><label>Email: <input type="email" name="email" required></label></p>
+                <p><label>Password: <input type="password" name="password" required minlength="6"></label></p>
+                <p><button type="submit" style="background: red; color: white; padding: 10px;">CREATE ADMIN</button></p>
+            </form>
+            <p><a href="/">← Back to Home</a></p>
+        """)
+        
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}", status=500)
 
 def debug_db_status(request):
     """Quick database debug endpoint"""
@@ -67,71 +139,47 @@ def debug_db_status(request):
 def home(request):
     """Home page view"""
     try:
-        # Check if tables exist and get data
+        # Get data for home page
         subjects_count = Subject.objects.count()
         
         if subjects_count == 0:
-            # Tables exist but no data - load sample data
-            return HttpResponse("""
-                <h1>🏠 Mining Encyclopedia</h1>
-                <p>Welcome to the GATE Mining Prep Platform!</p>
-                <p>Database is set up but no sample data found.</p>
-                <p><strong>Action needed:</strong> Load sample data via Render Shell:</p>
-                <pre>python load_sample_data.py</pre>
-                <p><a href="/">🔄 Refresh After Loading Data</a></p>
-            """)
+            # Tables exist but no data - show message
+            context = {
+                'no_data': True,
+                'featured_articles': [],
+                'featured_tests': [],
+                'subjects': [],
+            }
+            return render(request, 'main/home.html', context)
         
         # Get data for home page
         featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
         subjects = Subject.objects.all()[:6]
         
-        # Simple template without MockTest for now
-        html = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Mining Encyclopedia - GATE Prep</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 40px; }}
-                .section {{ margin: 20px 0; }}
-                .card {{ border: 1px solid #ddd; padding: 15px; margin: 10px 0; }}
-                h1 {{ color: #2c3e50; }}
-                a {{ color: #3498db; text-decoration: none; }}
-                a:hover {{ text-decoration: underline; }}
-            </style>
-        </head>
-        <body>
-            <h1>🏠 Mining Encyclopedia</h1>
-            <p>Welcome to the GATE Mining Prep Platform!</p>
-            
-            <div class="section">
-                <h2>📚 Subjects ({subjects.count()})</h2>
-                {''.join([f'<div class="card"><strong>{s.name}</strong><br>{s.description}</div>' for s in subjects])}
-            </div>
-            
-            <div class="section">
-                <h2>📖 Recent Articles ({featured_articles.count()})</h2>
-                {''.join([f'<div class="card"><strong>{a.title}</strong><br>Subject: {a.topic.subject.name}<br>Topic: {a.topic.name}</div>' for a in featured_articles])}
-            </div>
-            
-            <div class="section">
-                <h3>🔗 Quick Links</h3>
-                <p><a href="/admin/">Admin Panel</a> | <a href="/test/">Test Views</a></p>
-            </div>
-        </body>
-        </html>
-        """
+        # Try to get featured tests - handle if tests app isn't working
+        try:
+            featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
+        except:
+            featured_tests = []
         
-        return HttpResponse(html)
+        context = {
+            'featured_articles': featured_articles,
+            'featured_tests': featured_tests,
+            'subjects': subjects,
+            'no_data': False,
+        }
+        return render(request, 'main/home.html', context)
         
     except Exception as e:
-        return HttpResponse(f"""
-            <h1>🔧 Database Setup Issue</h1>
-            <p><strong>Error:</strong> {str(e)}</p>
-            <p>This might indicate missing tables or data.</p>
-            <p><a href="/test/">🧪 Test Simple Views</a></p>
-            <p><a href="/">🔄 Refresh Page</a></p>
-        """)
+        # If any error, show basic page with error info
+        context = {
+            'error': str(e),
+            'featured_articles': [],
+            'featured_tests': [],
+            'subjects': [],
+            'no_data': True,
+        }
+        return render(request, 'main/home.html', context)
 
 @login_required
 def dashboard(request):
