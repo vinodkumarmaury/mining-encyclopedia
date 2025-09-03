@@ -13,7 +13,7 @@ from django.utils import timezone
 
 def home(request):
     try:
-        featured_articles = Article.objects.filter(is_published=True)[:6]
+        featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
         featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
         subjects = Subject.objects.all()[:6]
         
@@ -27,9 +27,13 @@ def home(request):
         import logging
         logger = logging.getLogger(__name__)
         logger.error(f"Error in home view: {str(e)}")
-        # Return a simple error response for debugging
-        from django.http import HttpResponse
-        return HttpResponse(f"Home view error: {str(e)}", status=500)
+        # Return empty lists to prevent errors
+        context = {
+            'featured_articles': [],
+            'featured_tests': [],
+            'subjects': [],
+        }
+        return render(request, 'main/home.html', context)
 
 @login_required
 def dashboard(request):
