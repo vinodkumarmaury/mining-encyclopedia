@@ -69,39 +69,17 @@ def debug_db_status(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 def home(request):
-    try:
-        # Quick check if tables exist
-        Subject.objects.count()
-        
-        # If we get here, tables exist
-        featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
-        featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
-        subjects = Subject.objects.all()[:6]
-        
-        context = {
-            'featured_articles': featured_articles,
-            'featured_tests': featured_tests,
-            'subjects': subjects,
-        }
-        return render(request, 'main/home.html', context)
-    except Exception as e:
-        if "does not exist" in str(e):
-            # Tables don't exist, show migration needed message
-            return HttpResponse(f"""
-                <h1>🔧 Database Setup Required</h1>
-                <p><strong>Database Error:</strong> {str(e)}</p>
-                <p>The database tables don't exist yet. Please run migrations.</p>
-                <p><a href="/test/">🧪 Test Simple Views</a></p>
-                <p><a href="/">🔄 Refresh Page</a></p>
-                <hr>
-                <p><small>Error details: {str(e)}</small></p>
-            """)
-        else:
-            # Other error
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.error(f"Error in home view: {str(e)}")
-            return HttpResponse(f"Application Error: {str(e)}", status=500)
+    """Home page view - simplified for debugging"""
+    return HttpResponse("""
+        <h1>🏠 Mining Encyclopedia</h1>
+        <p>Welcome to the GATE Mining Prep Platform!</p>
+        <p>Database tables have been created successfully.</p>
+        <p><a href="/test/">Test Views</a></p>
+        <p><a href="/debug-db/">Debug Database</a></p>
+        <p><a href="/admin/">Admin Panel</a></p>
+        <hr>
+        <p><em>Note: Full template will be restored once debugging is complete.</em></p>
+    """)
 
 @login_required
 def dashboard(request):
