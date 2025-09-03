@@ -13,27 +13,64 @@ from django.utils import timezone
 
 def home(request):
     try:
-        featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
-        featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
-        subjects = Subject.objects.all()[:6]
+        # Debug database tables step by step
+        debug_info = []
         
-        context = {
-            'featured_articles': featured_articles,
-            'featured_tests': featured_tests,
-            'subjects': subjects,
-        }
-        return render(request, 'main/home.html', context)
+        # Test database connection
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            debug_info.append("✓ Database connection works")
+        
+        # Test Subject model
+        try:
+            subject_count = Subject.objects.count()
+            debug_info.append(f"✓ Subjects: {subject_count}")
+        except Exception as e:
+            debug_info.append(f"✗ Subjects error: {str(e)}")
+        
+        # Test Topic model
+        try:
+            topic_count = Topic.objects.count()
+            debug_info.append(f"✓ Topics: {topic_count}")
+        except Exception as e:
+            debug_info.append(f"✗ Topics error: {str(e)}")
+        
+        # Test Article model
+        try:
+            article_count = Article.objects.count()
+            debug_info.append(f"✓ Articles: {article_count}")
+        except Exception as e:
+            debug_info.append(f"✗ Articles error: {str(e)}")
+        
+        # Test MockTest model
+        try:
+            test_count = MockTest.objects.count()
+            debug_info.append(f"✓ Mock Tests: {test_count}")
+        except Exception as e:
+            debug_info.append(f"✗ Mock Tests error: {str(e)}")
+        
+        # If all models work, try the original query
+        if all("✓" in info for info in debug_info):
+            featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
+            featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
+            subjects = Subject.objects.all()[:6]
+            
+            context = {
+                'featured_articles': featured_articles,
+                'featured_tests': featured_tests,
+                'subjects': subjects,
+            }
+            return render(request, 'main/home.html', context)
+        else:
+            # Return debug info
+            return HttpResponse("<br>".join(debug_info))
+        
     except Exception as e:
         import logging
         logger = logging.getLogger(__name__)
         logger.error(f"Error in home view: {str(e)}")
-        # Return empty lists to prevent errors if database tables don't exist
-        context = {
-            'featured_articles': [],
-            'featured_tests': [],
-            'subjects': [],
-        }
-        return render(request, 'main/home.html', context)
+        return HttpResponse(f"Error in home view: {str(e)}", status=500)
 
 @login_required
 def dashboard(request):
