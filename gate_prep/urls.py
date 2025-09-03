@@ -6,26 +6,82 @@ from django.conf.urls.static import static
 from django.http import JsonResponse
 from django.db import connection
 
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.http import JsonResponse
+from django.db import connection
+
 def health_check(request):
-    """Simple health check endpoint for debugging deployment"""
+    """Health check endpoint for monitoring"""
     try:
         # Test database connection
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
+            db_status = "connected"
+    except Exception as e:
+        db_status = f"error: {str(e)}"
+    
+    return JsonResponse({
+        'status': 'healthy',
+        'debug': settings.DEBUG,
+        'allowed_hosts': settings.ALLOWED_HOSTS,
+        'database': db_status,
+    })
+
+def debug_view(request):
+    """Debug view to check database tables and models"""
+    try:
+        from django.apps import apps
+        from main.models import Article, Subject, Topic
+        from tests.models import MockTest
         
-        return JsonResponse({
-            'status': 'healthy',
-            'debug': settings.DEBUG,
-            'allowed_hosts': settings.ALLOWED_HOSTS,
-            'database': 'connected'
-        })
+        info = {
+            'tables_exist': True,
+            'models': {},
+            'errors': []
+        }
+        
+        try:
+            info['models']['subjects'] = Subject.objects.count()
+        except Exception as e:
+            info['errors'].append(f"Subject model error: {str(e)}")
+            
+        try:
+            info['models']['topics'] = Topic.objects.count()
+        except Exception as e:
+            info['errors'].append(f"Topic model error: {str(e)}")
+            
+        try:
+            info['models']['articles'] = Article.objects.count()
+        except Exception as e:
+            info['errors'].append(f"Article model error: {str(e)}")
+            
+        try:
+            info['models']['tests'] = MockTest.objects.count()
+        except Exception as e:
+            info['errors'].append(f"MockTest model error: {str(e)}")
+        
+        return JsonResponse(info)
     except Exception as e:
         return JsonResponse({
-            'status': 'error',
             'error': str(e),
-            'debug': settings.DEBUG,
-            'allowed_hosts': settings.ALLOWED_HOSTS,
-        }, status=500)
+            'type': type(e).__name__
+        })
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('tests/', include('tests.urls', namespace='tests')),
+    path('analytics/', include('analytics.urls', namespace='analytics')),
+    path('', include('main.urls', namespace='main')),
+    path('health/', health_check, name='health_check'),
+    path('debug/', debug_view, name='debug_view'),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = [
     path('health/', health_check, name='health_check'),
