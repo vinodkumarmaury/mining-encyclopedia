@@ -13,20 +13,46 @@ from django.utils import timezone
 
 def home(request):
     try:
-        # Simple test first
-        return HttpResponse("Simple test works!")
+        # Test database access step by step
+        from django.db import connection
         
-        # Original code commented out for debugging
-        # featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
-        # featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
-        # subjects = Subject.objects.all()[:6]
+        response_parts = ["Database connection test:<br>"]
         
-        # context = {
-        #     'featured_articles': featured_articles,
-        #     'featured_tests': featured_tests,
-        #     'subjects': subjects,
-        # }
-        # return render(request, 'main/home.html', context)
+        # Test connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            response_parts.append("✓ Database connection works<br>")
+        
+        # Test Subject model
+        try:
+            subject_count = Subject.objects.count()
+            response_parts.append(f"✓ Subjects: {subject_count}<br>")
+        except Exception as e:
+            response_parts.append(f"✗ Subjects error: {str(e)}<br>")
+        
+        # Test Topic model
+        try:
+            topic_count = Topic.objects.count()
+            response_parts.append(f"✓ Topics: {topic_count}<br>")
+        except Exception as e:
+            response_parts.append(f"✗ Topics error: {str(e)}<br>")
+        
+        # Test Article model
+        try:
+            article_count = Article.objects.count()
+            response_parts.append(f"✓ Articles: {article_count}<br>")
+        except Exception as e:
+            response_parts.append(f"✗ Articles error: {str(e)}<br>")
+        
+        # Test MockTest model
+        try:
+            test_count = MockTest.objects.count()
+            response_parts.append(f"✓ Mock Tests: {test_count}<br>")
+        except Exception as e:
+            response_parts.append(f"✗ Mock Tests error: {str(e)}<br>")
+        
+        return HttpResponse("".join(response_parts))
+        
     except Exception as e:
         import logging
         logger = logging.getLogger(__name__)
