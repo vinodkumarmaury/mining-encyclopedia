@@ -25,20 +25,7 @@ import json
 from django.utils import timezone
 
 def force_migrate(request):
-    """Force run migrations - ONLY use in deployment emergency"""
-    if request.method != 'POST':
-        return HttpResponse("""
-            <h1>🚨 Force Migration Tool</h1>
-            <p><strong>WARNING:</strong> This will force run Django migrations.</p>
-            <p>Only use if normal deployment migration failed.</p>
-            <form method="post">
-                <button type="submit" style="background: red; color: white; padding: 10px;">
-                    FORCE RUN MIGRATIONS
-                </button>
-            </form>
-            <p><a href="/">← Back to Home</a></p>
-        """)
-    
+    """Force run migrations - emergency deployment fix"""
     try:
         from django.core.management import call_command
         from io import StringIO
