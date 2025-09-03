@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.db.models import Q, Count, Avg
 from django.contrib import messages
 from django.views.decorators.http import require_POST
@@ -13,27 +13,25 @@ from django.utils import timezone
 
 def home(request):
     try:
-        featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
-        featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
-        subjects = Subject.objects.all()[:6]
+        # Simple test first
+        return HttpResponse("Simple test works!")
         
-        context = {
-            'featured_articles': featured_articles,
-            'featured_tests': featured_tests,
-            'subjects': subjects,
-        }
-        return render(request, 'main/home.html', context)
+        # Original code commented out for debugging
+        # featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
+        # featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
+        # subjects = Subject.objects.all()[:6]
+        
+        # context = {
+        #     'featured_articles': featured_articles,
+        #     'featured_tests': featured_tests,
+        #     'subjects': subjects,
+        # }
+        # return render(request, 'main/home.html', context)
     except Exception as e:
         import logging
         logger = logging.getLogger(__name__)
         logger.error(f"Error in home view: {str(e)}")
-        # Return empty lists to prevent errors
-        context = {
-            'featured_articles': [],
-            'featured_tests': [],
-            'subjects': [],
-        }
-        return render(request, 'main/home.html', context)
+        return HttpResponse(f"Error: {str(e)}", status=500)
 
 @login_required
 def dashboard(request):
