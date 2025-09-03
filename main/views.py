@@ -40,17 +40,73 @@ def debug_db_status(request):
         }, status=500)
 
 def home(request):
-    """Home page view - simplified for debugging"""
-    return HttpResponse("""
-        <h1>🏠 Mining Encyclopedia</h1>
-        <p>Welcome to the GATE Mining Prep Platform!</p>
-        <p>Database tables have been created successfully.</p>
-        <p><a href="/test/">Test Views</a></p>
-        <p><a href="/debug-db/">Debug Database</a></p>
-        <p><a href="/admin/">Admin Panel</a></p>
-        <hr>
-        <p><em>Note: Full template will be restored once debugging is complete.</em></p>
-    """)
+    """Home page view"""
+    try:
+        # Check if tables exist and get data
+        subjects_count = Subject.objects.count()
+        
+        if subjects_count == 0:
+            # Tables exist but no data - load sample data
+            return HttpResponse("""
+                <h1>🏠 Mining Encyclopedia</h1>
+                <p>Welcome to the GATE Mining Prep Platform!</p>
+                <p>Database is set up but no sample data found.</p>
+                <p><strong>Action needed:</strong> Load sample data via Render Shell:</p>
+                <pre>python load_sample_data.py</pre>
+                <p><a href="/">🔄 Refresh After Loading Data</a></p>
+            """)
+        
+        # Get data for home page
+        featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
+        subjects = Subject.objects.all()[:6]
+        
+        # Simple template without MockTest for now
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Mining Encyclopedia - GATE Prep</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 40px; }}
+                .section {{ margin: 20px 0; }}
+                .card {{ border: 1px solid #ddd; padding: 15px; margin: 10px 0; }}
+                h1 {{ color: #2c3e50; }}
+                a {{ color: #3498db; text-decoration: none; }}
+                a:hover {{ text-decoration: underline; }}
+            </style>
+        </head>
+        <body>
+            <h1>🏠 Mining Encyclopedia</h1>
+            <p>Welcome to the GATE Mining Prep Platform!</p>
+            
+            <div class="section">
+                <h2>📚 Subjects ({subjects.count()})</h2>
+                {''.join([f'<div class="card"><strong>{s.name}</strong><br>{s.description}</div>' for s in subjects])}
+            </div>
+            
+            <div class="section">
+                <h2>📖 Recent Articles ({featured_articles.count()})</h2>
+                {''.join([f'<div class="card"><strong>{a.title}</strong><br>Subject: {a.topic.subject.name}<br>Topic: {a.topic.name}</div>' for a in featured_articles])}
+            </div>
+            
+            <div class="section">
+                <h3>🔗 Quick Links</h3>
+                <p><a href="/admin/">Admin Panel</a> | <a href="/test/">Test Views</a></p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return HttpResponse(html)
+        
+    except Exception as e:
+        return HttpResponse(f"""
+            <h1>🔧 Database Setup Issue</h1>
+            <p><strong>Error:</strong> {str(e)}</p>
+            <p>This might indicate missing tables or data.</p>
+            <p><a href="/test/">🧪 Test Simple Views</a></p>
+            <p><a href="/">🔄 Refresh Page</a></p>
+        """)
 
 @login_required
 def dashboard(request):
