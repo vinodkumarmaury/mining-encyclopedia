@@ -82,6 +82,18 @@ DATABASES = {
     }
 }
 
+# For Render deployment with persistent disk
+# Check if we're on Render and have a persistent disk mounted
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    # On Render, try to use persistent disk if available
+    PERSISTENT_DISK_PATH = '/opt/render/project/data'
+    if os.path.exists(PERSISTENT_DISK_PATH):
+        DATABASES['default']['NAME'] = os.path.join(PERSISTENT_DISK_PATH, 'db.sqlite3')
+    else:
+        # Fallback: Use the regular location but it won't persist across deployments
+        DATABASES['default']['NAME'] = BASE_DIR / 'db.sqlite3'
+
 # For Render deployment, use DATABASE_URL if provided (optional PostgreSQL upgrade path)
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
