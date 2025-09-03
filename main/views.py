@@ -15,6 +15,59 @@ def test_simple(request):
     """Simple test endpoint to check if views work"""
     return HttpResponse("✅ Main app views working correctly!")
 
+def debug_db_status(request):
+    """Quick database debug endpoint"""
+    try:
+        from django.db import connection
+        
+        info = {
+            'database_connected': False,
+            'tables_exist': {},
+            'counts': {},
+            'errors': []
+        }
+        
+        # Test connection
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT version()")
+                version = cursor.fetchone()
+                info['database_connected'] = True
+                info['database_version'] = version[0][:50] if version else 'Unknown'
+        except Exception as e:
+            info['errors'].append(f"Connection error: {str(e)}")
+        
+        # Test each model
+        models_to_test = [
+            ('Subject', Subject),
+            ('Topic', Topic), 
+            ('Article', Article),
+        ]
+        
+        for name, model in models_to_test:
+            try:
+                count = model.objects.count()
+                info['tables_exist'][name] = True
+                info['counts'][name] = count
+            except Exception as e:
+                info['tables_exist'][name] = False
+                info['errors'].append(f"{name}: {str(e)}")
+        
+        # Also test MockTest but handle import error
+        try:
+            from tests.models import MockTest
+            count = MockTest.objects.count()
+            info['tables_exist']['MockTest'] = True
+            info['counts']['MockTest'] = count
+        except Exception as e:
+            info['tables_exist']['MockTest'] = False
+            info['errors'].append(f"MockTest: {str(e)}")
+        
+        return JsonResponse(info, indent=2)
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 def home(request):
     try:
         # Quick check if tables exist
