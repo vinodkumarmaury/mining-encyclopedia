@@ -12,16 +12,24 @@ import json
 from django.utils import timezone
 
 def home(request):
-    featured_articles = Article.objects.filter(is_published=True)[:6]
-    featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
-    subjects = Subject.objects.all()[:6]
-    
-    context = {
-        'featured_articles': featured_articles,
-        'featured_tests': featured_tests,
-        'subjects': subjects,
-    }
-    return render(request, 'main/home.html', context)
+    try:
+        featured_articles = Article.objects.filter(is_published=True)[:6]
+        featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
+        subjects = Subject.objects.all()[:6]
+        
+        context = {
+            'featured_articles': featured_articles,
+            'featured_tests': featured_tests,
+            'subjects': subjects,
+        }
+        return render(request, 'main/home.html', context)
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error in home view: {str(e)}")
+        # Return a simple error response for debugging
+        from django.http import HttpResponse
+        return HttpResponse(f"Home view error: {str(e)}", status=500)
 
 @login_required
 def dashboard(request):
