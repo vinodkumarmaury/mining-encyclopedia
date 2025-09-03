@@ -30,44 +30,45 @@ def health_check(request):
         'database': db_status,
     })
 
-def debug_view(request):
-    """Debug view to check database tables and models"""
+def migration_check(request):
+    """Check migration status and run migrations if needed"""
     try:
-        from django.apps import apps
-        from main.models import Article, Subject, Topic
-        from tests.models import MockTest
+        from django.core.management import execute_from_command_line
+        from django.core.management.commands.migrate import Command as MigrateCommand
+        from django.core.management.commands.showmigrations import Command as ShowMigrationsCommand
+        from io import StringIO
+        import sys
         
-        info = {
-            'tables_exist': True,
-            'models': {},
-            'errors': []
-        }
+        # Capture output
+        old_stdout = sys.stdout
+        sys.stdout = mystdout = StringIO()
         
         try:
-            info['models']['subjects'] = Subject.objects.count()
-        except Exception as e:
-            info['errors'].append(f"Subject model error: {str(e)}")
+            # Show current migration status
+            execute_from_command_line(['manage.py', 'showmigrations'])
+            migration_status = mystdout.getvalue()
             
-        try:
-            info['models']['topics'] = Topic.objects.count()
-        except Exception as e:
-            info['errors'].append(f"Topic model error: {str(e)}")
+            # Reset stdout capture
+            mystdout = StringIO()
+            sys.stdout = mystdout
             
-        try:
-            info['models']['articles'] = Article.objects.count()
-        except Exception as e:
-            info['errors'].append(f"Article model error: {str(e)}")
+            # Run migrations
+            execute_from_command_line(['manage.py', 'migrate'])
+            migration_output = mystdout.getvalue()
             
-        try:
-            info['models']['tests'] = MockTest.objects.count()
-        except Exception as e:
-            info['errors'].append(f"MockTest model error: {str(e)}")
+        finally:
+            sys.stdout = old_stdout
         
-        return JsonResponse(info)
+        return JsonResponse({
+            'migration_status': migration_status,
+            'migration_output': migration_output,
+            'success': True
+        })
+        
     except Exception as e:
         return JsonResponse({
             'error': str(e),
-            'type': type(e).__name__
+            'success': False
         })
 
 urlpatterns = [
@@ -77,7 +78,7 @@ urlpatterns = [
     path('analytics/', include('analytics.urls', namespace='analytics')),
     path('', include('main.urls', namespace='main')),
     path('health/', health_check, name='health_check'),
-    path('debug/', debug_view, name='debug_view'),
+    path('migrate/', migration_check, name='migration_check'),
 ]
 
 if settings.DEBUG:
