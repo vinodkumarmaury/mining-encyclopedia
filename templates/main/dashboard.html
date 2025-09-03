@@ -3,168 +3,408 @@
 {% block title %}Dashboard - GATE Mining Prep{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold">Welcome back, {{ user.first_name|default:user.username }}!</h2>
-        <p class="text-gray-600">Track your progress and continue your GATE preparation journey</p>
-    </div>
-
-    {% if user_profile.role == 'professor' %}
-    <div class="mb-6">
-        <div class="bg-white rounded-lg shadow p-4 flex items-center justify-between">
-            <div>
-                <h5 class="font-semibold">Professor Tools</h5>
-                <p class="text-sm text-gray-500">Quick access to create content and view student performance.</p>
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-10">
+                <h1 class="display-5 fw-bold text-white mb-3">
+                    <i class="fas fa-tachometer-alt me-3"></i>Welcome back, {{ user.first_name|default:user.username }}!
+                </h1>
+                <p class="lead text-white-50 mb-4">Track your progress and continue your GATE preparation journey</p>
+                
+                <!-- Quick Actions -->
+                <div class="d-flex justify-content-center flex-wrap gap-3 mt-4">
+                    <a href="{% url 'tests:test_list' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-play me-2"></i>Take Test
+                    </a>
+                    <a href="{% url 'main:article_list' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-book me-2"></i>Study Articles
+                    </a>
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-user me-2"></i>View Profile
+                    </a>
+                </div>
             </div>
-            <div class="flex gap-2">
-                {% url 'main:article_create' as article_create_url %}
-                {% if article_create_url %}
-                    <a href="{{ article_create_url }}" class="bg-indigo-600 text-white px-3 py-2 rounded">Create Article</a>
-                {% endif %}
-                {% url 'tests:create_test' as create_test_url %}
-                {% if create_test_url %}
-                    <a href="{{ create_test_url }}" class="border border-indigo-600 text-indigo-600 px-3 py-2 rounded">Create Mock Test</a>
-                {% endif %}
-                {% url 'analytics:dashboard' as analytics_url %}
-                {% if analytics_url %}
-                    <a href="{{ analytics_url }}" class="border border-gray-300 px-3 py-2 rounded">View Student Performance</a>
-                {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Professor Tools -->
+    {% if user_profile.role == 'professor' %}
+    <div class="card modern-card mb-5" data-aos="fade-up">
+        <div class="card-header gradient-bg">
+            <h4 class="fw-bold mb-0 text-white">
+                <i class="fas fa-chalkboard-teacher me-2"></i>Professor Tools
+            </h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-4">Quick access to create content and view student performance</p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <a href="{% url 'main:article_create' %}" class="btn btn-gradient w-100">
+                        <i class="fas fa-plus-circle me-2"></i>Create Article
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'tests:create_test' %}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-plus-square me-2"></i>Create Mock Test
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'analytics:dashboard' %}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-chart-bar me-2"></i>Analytics Dashboard
+                    </a>
+                </div>
             </div>
         </div>
     </div>
     {% endif %}
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg p-6 text-center">
-            <i class="fas fa-clipboard-check fa-2x mb-3"></i>
-            <h4 class="text-2xl font-bold">{{ total_tests }}</h4>
-            <p class="mb-0">Tests Completed</p>
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="0">
+            <div class="card modern-card h-100 text-center bg-primary text-white">
+                <div class="card-body">
+                    <div class="stat-icon bg-white bg-opacity-20 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-clipboard-check fa-2x"></i>
+                    </div>
+                    <h2 class="display-4 fw-bold mb-2">{{ total_tests }}</h2>
+                    <p class="mb-0 fw-semibold">Tests Completed</p>
+                </div>
+            </div>
         </div>
-        <div class="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg p-6 text-center">
-            <i class="fas fa-percentage fa-2x mb-3"></i>
-            <h4 class="text-2xl font-bold">{{ avg_score }}%</h4>
-            <p class="mb-0">Average Score</p>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="card modern-card h-100 text-center bg-success text-white">
+                <div class="card-body">
+                    <div class="stat-icon bg-white bg-opacity-20 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-percentage fa-2x"></i>
+                    </div>
+                    <h2 class="display-4 fw-bold mb-2">{{ avg_score|floatformat:0 }}%</h2>
+                    <p class="mb-0 fw-semibold">Average Score</p>
+                </div>
+            </div>
         </div>
-        <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg p-6 text-center">
-            <i class="fas fa-fire fa-2x mb-3"></i>
-            <h4 class="text-2xl font-bold">{{ user_profile.streak_days }}</h4>
-            <p class="mb-0">Day Streak</p>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="card modern-card h-100 text-center bg-warning text-white">
+                <div class="card-body">
+                    <div class="stat-icon bg-white bg-opacity-20 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-fire fa-2x"></i>
+                    </div>
+                    <h2 class="display-4 fw-bold mb-2">{{ user_profile.streak_days|default:0 }}</h2>
+                    <p class="mb-0 fw-semibold">Day Streak</p>
+                </div>
+            </div>
         </div>
-        <div class="bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-lg p-6 text-center">
-            <i class="fas fa-book-reader fa-2x mb-3"></i>
-            <h4 class="text-2xl font-bold">{{ user_profile.total_articles_read }}</h4>
-            <p class="mb-0">Articles Read</p>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="card modern-card h-100 text-center bg-info text-white">
+                <div class="card-body">
+                    <div class="stat-icon bg-white bg-opacity-20 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-book-reader fa-2x"></i>
+                    </div>
+                    <h2 class="display-4 fw-bold mb-2">{{ user_profile.total_articles_read|default:0 }}</h2>
+                    <p class="mb-0 fw-semibold">Articles Read</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Charts and Analytics -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <div class="lg:col-span-2 bg-white rounded-lg shadow p-4">
-            <h5 class="font-semibold mb-2">Performance Trend</h5>
-            <div class="h-64">
-                <canvas id="performanceChart" class="w-full h-full"></canvas>
+    <!-- Charts Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8" data-aos="fade-right">
+            <div class="card modern-card h-100">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-chart-line me-2 text-primary"></i>Performance Trend
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="performanceChart" style="width: 100%; height: 100%;"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-4">
-            <h5 class="font-semibold mb-2">Subject Performance</h5>
-            <div class="h-64">
-                <canvas id="subjectChart" class="w-full h-full"></canvas>
+        <div class="col-lg-4" data-aos="fade-left">
+            <div class="card modern-card h-100">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-chart-pie me-2 text-primary"></i>Subject Performance
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="subjectChart" style="width: 100%; height: 100%;"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Recent Activity -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="bg-white rounded-lg shadow p-4">
-            <div class="flex items-center justify-between mb-3">
-                <h5 class="font-semibold">Recent Test Attempts</h5>
-                <a href="{% url 'tests:test_list' %}" class="text-sm text-indigo-600">View All</a>
-            </div>
-            <div>
-                {% if recent_attempts %}
-                    {% for attempt in recent_attempts %}
-                    <div class="flex justify-between items-center py-2 border-b">
-                        <div>
-                            <h6 class="font-medium">{{ attempt.mock_test.title }}</h6>
-                            <small class="text-gray-500">{{ attempt.completed_at|date:"M d, Y" }}</small>
+    <div class="row g-4">
+        <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="card modern-card h-100">
+                <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-clipboard-list me-2 text-primary"></i>Recent Test Attempts
+                    </h5>
+                    <a href="{% url 'tests:test_list' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i>View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_attempts %}
+                        <div class="list-group list-group-flush">
+                            {% for attempt in recent_attempts %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <div>
+                                    <h6 class="fw-semibold mb-1">{{ attempt.mock_test.title }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>{{ attempt.completed_at|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                                <div>
+                                    <span class="badge {% if attempt.percentage >= 80 %}bg-success{% elif attempt.percentage >= 60 %}bg-warning{% else %}bg-danger{% endif %} rounded-pill">
+                                        {{ attempt.percentage|floatformat:1 }}%
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
-                        <div>
-                            <span class="inline-block px-2 py-1 rounded text-sm {% if attempt.percentage >= 80 %}bg-green-100 text-green-800{% elif attempt.percentage >= 60 %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">{{ attempt.percentage|floatformat:1 }}%</span>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-clipboard-list display-4 text-muted mb-3"></i>
+                            <h6 class="fw-bold">No test attempts yet</h6>
+                            <p class="text-muted mb-3">Start your GATE preparation journey</p>
+                            <a href="{% url 'tests:test_list' %}" class="btn btn-gradient">
+                                <i class="fas fa-play me-2"></i>Take Your First Test
+                            </a>
                         </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-gray-500">No test attempts yet. <a href="{% url 'tests:test_list' %}" class="text-indigo-600">Take your first test!</a></p>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow p-4">
-            <div class="flex items-center justify-between mb-3">
-                <h5 class="font-semibold">Bookmarked Articles</h5>
-                <a href="{% url 'main:article_list' %}" class="text-sm text-indigo-600">Browse Articles</a>
-            </div>
-            <div>
-                {% if bookmarked_articles %}
-                    {% for article in bookmarked_articles %}
-                    <div class="flex justify-between items-center py-2 border-b">
-                        <div>
-                            <h6 class="font-medium">{{ article.title|truncatechars:40 }}</h6>
-                            <small class="text-gray-500">{{ article.topic.name }}</small>
+        <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="card modern-card h-100">
+                <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-bookmark me-2 text-primary"></i>Bookmarked Articles
+                    </h5>
+                    <a href="{% url 'main:article_list' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-search me-1"></i>Browse Articles
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if bookmarked_articles %}
+                        <div class="list-group list-group-flush">
+                            {% for article in bookmarked_articles %}
+                            <div class="list-group-item border-0 px-0">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-semibold mb-1">
+                                            <a href="{% url 'main:article_detail' article.slug %}" class="text-decoration-none">
+                                                {{ article.title|truncatechars:40 }}
+                                            </a>
+                                        </h6>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <span class="badge bg-primary">{{ article.topic.subject.name }}</span>
+                                            <small class="text-muted">{{ article.topic.name }}</small>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'main:article_detail' article.slug %}" class="btn btn-sm btn-outline-primary ms-2">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
-                        <div>
-                            <a href="{% url 'main:article_detail' article.slug %}" class="text-indigo-600">Read</a>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-bookmark display-4 text-muted mb-3"></i>
+                            <h6 class="fw-bold">No bookmarked articles yet</h6>
+                            <p class="text-muted mb-3">Save articles for quick access later</p>
+                            <a href="{% url 'main:article_list' %}" class="btn btn-gradient">
+                                <i class="fas fa-book me-2"></i>Explore Articles
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="row mt-5">
+        <div class="col-12" data-aos="fade-up">
+            <div class="card modern-card">
+                <div class="card-header gradient-bg">
+                    <h5 class="fw-bold mb-0 text-white">
+                        <i class="fas fa-trophy me-2"></i>Your GATE Preparation Progress
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4 text-center">
+                        <div class="col-md-3">
+                            <div class="progress-circle mx-auto mb-3" style="width: 100px; height: 100px;">
+                                <div class="progress-circle-inner d-flex align-items-center justify-content-center">
+                                    <span class="fw-bold fs-5">{{ avg_score|floatformat:0 }}%</span>
+                                </div>
+                            </div>
+                            <h6 class="fw-bold">Overall Performance</h6>
+                            <p class="text-muted small">Average test score</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="d-flex align-items-center justify-content-center mb-3" style="height: 100px;">
+                                <i class="fas fa-calendar-day fa-3x text-warning"></i>
+                            </div>
+                            <h6 class="fw-bold">Study Streak</h6>
+                            <p class="text-muted small">{{ user_profile.streak_days|default:0 }} consecutive days</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="d-flex align-items-center justify-content-center mb-3" style="height: 100px;">
+                                <i class="fas fa-graduation-cap fa-3x text-success"></i>
+                            </div>
+                            <h6 class="fw-bold">Knowledge Base</h6>
+                            <p class="text-muted small">{{ user_profile.total_articles_read|default:0 }} articles completed</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="d-flex align-items-center justify-content-center mb-3" style="height: 100px;">
+                                <i class="fas fa-target fa-3x text-info"></i>
+                            </div>
+                            <h6 class="fw-bold">Test Mastery</h6>
+                            <p class="text-muted small">{{ total_tests }} practice tests taken</p>
                         </div>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-gray-500">No bookmarked articles yet. <a href="{% url 'main:article_list' %}" class="text-indigo-600">Explore articles!</a></p>
-                {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-{% block extra_js %}
-{{ block.super }}
-<script>
-fetch('/analytics/api/performance/')
-    .then(response => response.json())
-    .then(data => {
-        const ctx = document.getElementById('performanceChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.dates,
-                datasets: [{
-                    label: 'Score %',
-                    data: data.scores,
-                    borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99,102,241,0.08)',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, max: 100 }
-                }
-            }
-        });
-
-        const subjectCtx = document.getElementById('subjectChart').getContext('2d');
-        new Chart(subjectCtx, {
-            type: 'doughnut',
-            data: {
-                labels: data.subjects.map(s => s.name),
-                datasets: [{ data: data.subjects.map(s => s.average), backgroundColor: ['#6366f1','#10b981','#f59e0b','#ef4444','#7c3aed','#fb923c'] }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    });
-</script>
 {% endblock %}
 
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Performance Chart
+const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+const performanceChart = new Chart(performanceCtx, {
+    type: 'line',
+    data: {
+        labels: [{% for attempt in recent_attempts %}'{{ attempt.completed_at|date:"M d" }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Score %',
+            data: [{% for attempt in recent_attempts %}{{ attempt.percentage }}{% if not forloop.last %},{% endif %}{% endfor %}],
+            borderColor: 'rgba(59, 130, 246, 1)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#3b82f6',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 3,
+            pointRadius: 6
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.1)'
+                },
+                ticks: {
+                    color: '#6b7280'
+                }
+            },
+            x: {
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.1)'
+                },
+                ticks: {
+                    color: '#6b7280'
+                }
+            }
+        }
+    }
+});
+
+// Subject Performance Chart
+const subjectCtx = document.getElementById('subjectChart').getContext('2d');
+const subjectChart = new Chart(subjectCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Excellent', 'Good', 'Average', 'Needs Work'],
+        datasets: [{
+            data: [{{ avg_score|floatformat:0 }}, {{ avg_score|add:"-10"|floatformat:0 }}, {{ avg_score|add:"-20"|floatformat:0 }}, {{ avg_score|add:"-30"|floatformat:0 }}],
+            backgroundColor: [
+                '#10b981',
+                '#3b82f6',
+                '#f59e0b',
+                '#ef4444'
+            ],
+            borderWidth: 0,
+            cutout: '60%'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 20,
+                    color: '#6b7280'
+                }
+            }
+        }
+    }
+});
+
+// Progress Circle Animation
+document.addEventListener('DOMContentLoaded', function() {
+    const progressCircle = document.querySelector('.progress-circle');
+    if (progressCircle) {
+        const percentage = {{ avg_score|floatformat:0 }};
+        const circle = progressCircle.querySelector('.progress-circle-inner');
+        
+        // Add CSS for circular progress
+        progressCircle.style.background = `conic-gradient(
+            #3b82f6 0deg ${percentage * 3.6}deg,
+            #e5e7eb ${percentage * 3.6}deg 360deg
+        )`;
+        progressCircle.style.borderRadius = '50%';
+        progressCircle.style.position = 'relative';
+        
+        circle.style.background = '#ffffff';
+        circle.style.borderRadius = '50%';
+        circle.style.margin = '10px';
+        circle.style.width = '80px';
+        circle.style.height = '80px';
+    }
+});
+
+// Initialize AOS (Animate On Scroll)
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+    }
+});
+</script>
 {% endblock %}

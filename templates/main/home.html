@@ -2,185 +2,191 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div data-aos="fade-right">
-                <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 animate__animated animate__fadeInDown">Master GATE Mining Engineering</h1>
-                <p class="text-lg sm:text-xl mb-6 animate__animated animate__fadeInUp">Comprehensive preparation platform with expert-curated content, mock tests, and personalized analytics to ace your GATE Mining exam.</p>
+<section class="py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6 text-white">
+                <h1 class="display-4 fw-bold mb-4 fade-in-up">Master GATE Mining Engineering</h1>
+                <p class="fs-5 mb-4 fade-in-up">Comprehensive preparation platform with expert-curated content, mock tests, and personalized analytics to ace your GATE Mining exam.</p>
                 {% if not user.is_authenticated %}
-                    <div class="flex gap-4">
-                        <a href="{% url 'accounts:register' %}" class="bg-white text-indigo-600 px-5 py-3 rounded-lg font-semibold">Get Started</a>
-                        <a href="{% url 'accounts:login' %}" class="border border-white text-white px-5 py-3 rounded-lg">Login</a>
+                    <div class="d-flex gap-3 fade-in-up">
+                        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg text-primary fw-semibold">
+                            <i class="fas fa-rocket me-2"></i>Get Started
+                        </a>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
                     </div>
                 {% else %}
-                    <a href="{% url 'main:dashboard' %}" class="bg-white text-indigo-600 px-5 py-3 rounded-lg font-semibold">Go to Dashboard</a>
+                    <a href="{% url 'main:dashboard' %}" class="btn btn-light btn-lg text-primary fw-semibold fade-in-up">
+                        <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                    </a>
                 {% endif %}
             </div>
-            <div data-aos="zoom-in" data-aos-delay="200" class="flex justify-center">
-                <img src="https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg" alt="GATE Preparation" class="rounded-lg shadow-lg w-full max-w-md animate__animated animate__zoomIn">
+            <div class="col-lg-6 text-center">
+                <img src="https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg" 
+                     alt="GATE Preparation" 
+                     class="img-fluid rounded-custom shadow-custom-lg fade-in-up" 
+                     style="max-width: 400px;">
             </div>
         </div>
     </div>
 </section>
-<script>
-    document.addEventListener('DOMContentLoaded', function(){
-        const counters = document.querySelectorAll('.stat-counter');
-        if ('IntersectionObserver' in window) {
-            const io = new IntersectionObserver(entries=>{
-                entries.forEach(entry=>{
-                    if (entry.isIntersecting) {
-                        const el = entry.target;
-                        const to = parseInt(el.dataset.to || el.textContent || '0',10);
-                        let start = 0;
-                        const dur = 900;
-                        const step = Math.ceil(to / (dur / 20));
-                        const t = setInterval(()=>{
-                            start += step;
-                            if (start >= to) { el.textContent = to; clearInterval(t); }
-                            else el.textContent = start;
-                        },20);
-                        io.unobserve(el);
-                    }
-                });
-            }, {threshold:0.3});
 
-            counters.forEach(c=>io.observe(c));
-        }
-    });
-</script>
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card text-center h-100">
+                    <div class="stat-counter" data-to="100">0</div>
+                    <h6 class="mb-0">Expert Articles</h6>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card text-center h-100">
+                    <div class="stat-counter" data-to="50">0</div>
+                    <h6 class="mb-0">Mock Tests</h6>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card text-center h-100">
+                    <div class="stat-counter" data-to="1000">0</div>
+                    <h6 class="mb-0">Students</h6>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card text-center h-100">
+                    <div class="stat-counter" data-to="95">0</div>
+                    <h6 class="mb-0">Success Rate %</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- Features Section -->
-<section class="py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="text-2xl font-bold">Why Choose Our Platform?</h2>
-            <p class="text-gray-600">Everything you need to excel in GATE Mining Engineering</p>
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-gradient">Why Choose Our Platform?</h2>
+            <p class="text-muted fs-5">Everything you need to excel in GATE Mining Engineering</p>
         </div>
 
-        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div data-aos="fade-up" data-aos-delay="100" class="text-center p-6 bg-white rounded-lg shadow">
-                <div class="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto animate__animated animate__pulse animate__infinite">
-                    <i class="fas fa-book-open"></i>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Expert Articles</h5>
+                    <p class="text-muted">100+ comprehensive articles covering all GATE Mining topics with detailed explanations and examples.</p>
                 </div>
-                <h5 class="mt-4">Expert Articles</h5>
-                <p class="text-gray-600">100+ comprehensive articles covering all GATE Mining topics with detailed explanations and examples.</p>
             </div>
-            <div data-aos="fade-up" data-aos-delay="200" class="text-center p-6 bg-white rounded-lg shadow">
-                <div class="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto animate__animated animate__pulse animate__infinite">
-                    <i class="fas fa-clipboard-check"></i>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Mock Tests</h5>
+                    <p class="text-muted">50+ practice tests with detailed analysis, performance tracking, and instant feedback.</p>
                 </div>
-                <h5 class="mt-4">Mock Tests</h5>
-                <p class="text-gray-600">50+ practice tests with detailed analysis, performance tracking, and instant feedback.</p>
             </div>
-            <div data-aos="fade-up" data-aos-delay="300" class="text-center p-6 bg-white rounded-lg shadow">
-                <div class="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto animate__animated animate__pulse animate__infinite">
-                    <i class="fas fa-chart-line"></i>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Performance Analytics</h5>
+                    <p class="text-muted">Advanced analytics dashboard to track your progress and identify areas for improvement.</p>
                 </div>
-                <h5 class="mt-4">Performance Analytics</h5>
-                <p class="text-gray-600">Advanced analytics dashboard to track your progress and identify areas for improvement.</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Featured Content -->
-<section class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-8">
-            <h3 class="text-2xl font-bold">Featured Articles</h3>
-            <p class="text-gray-600">Start with these popular articles</p>
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h3 class="display-6 fw-bold">Featured Articles</h3>
+                <p class="text-muted fs-5">Start with these popular articles</p>
+            </div>
+            <div class="col-auto">
+                <a href="{% url 'main:article_list' %}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i>View All Articles
+                </a>
+            </div>
         </div>
 
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div class="row g-4">
             {% for article in featured_articles %}
-            <div class="bg-white rounded-lg shadow overflow-hidden">
-                {% if article.featured_image %}
-                    <img src="{{ article.featured_image.url }}" class="w-full h-48 object-cover" alt="{{ article.title }}">
-                {% else %}
-                    <img src="https://images.pexels.com/photos/159775/library-education-study-books-159775.jpeg" class="w-full h-48 object-cover" alt="{{ article.title }}">
-                {% endif %}
-                <div class="p-4">
-                    <span class="inline-block bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-sm mb-2">{{ article.topic.subject.name }}</span>
-                    <h5 class="font-semibold text-lg">{{ article.title }}</h5>
-                    <p class="text-gray-600">{{ article.excerpt|truncatewords:20 }}</p>
-                    <div class="flex items-center justify-between mt-4">
-                        <span class="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded">{{ article.get_difficulty_display }}</span>
-                        <small class="text-gray-500">{{ article.views }} views</small>
-                    </div>
-                    <div class="mt-4">
-                        <a href="{% url 'main:article_detail' article.slug %}" class="inline-block bg-indigo-600 text-white px-3 py-2 rounded">Read Article</a>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 shadow-custom">
+                    {% if article.featured_image %}
+                        <img src="{{ article.featured_image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ article.title }}">
+                    {% else %}
+                        <img src="https://images.pexels.com/photos/159775/library-education-study-books-159775.jpeg" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ article.title }}">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-primary">{{ article.subject.name }}</span>
+                            <small class="text-muted">{{ article.created_at|date:"M d" }}</small>
+                        </div>
+                        <h5 class="card-title fw-bold">{{ article.title }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ article.excerpt|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-auto pt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-user me-1"></i>{{ article.author.get_full_name|default:article.author.username }}
+                            </small>
+                            <a href="{% url 'main:article_detail' article.slug %}" class="btn btn-outline-primary btn-sm">
+                                Read More <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-
-        <div class="text-center mt-8">
-            <a href="{% url 'main:article_list' %}" class="inline-block border border-indigo-600 text-indigo-600 px-4 py-2 rounded">View All Articles</a>
-        </div>
-    </div>
-</section>
-
-<!-- Featured Tests -->
-<section class="py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-6">
-            <h3 class="text-2xl font-bold">Featured Mock Tests</h3>
-            <p class="text-gray-600">Test your knowledge with these popular tests</p>
-        </div>
-
-        <div class="grid gap-6 md:grid-cols-2">
-            {% for test in featured_tests %}
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-start justify-between mb-4">
-                    <h5 class="font-semibold">{{ test.title }}</h5>
-                    <span class="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded">{{ test.get_difficulty_display }}</span>
-                </div>
-                <p class="text-gray-600">{{ test.description|truncatewords:15 }}</p>
-                <div class="grid grid-cols-3 text-center mt-4">
-                    <div>
-                        <strong>{{ test.question_count }}</strong>
-                        <div class="text-sm text-gray-500">Questions</div>
-                    </div>
-                    <div>
-                        <strong>{{ test.duration_minutes }}m</strong>
-                        <div class="text-sm text-gray-500">Duration</div>
-                    </div>
-                    <div>
-                        <strong>{{ test.total_marks }}</strong>
-                        <div class="text-sm text-gray-500">Marks</div>
-                    </div>
-                </div>
-                <a href="{% url 'tests:test_detail' test.id %}" class="mt-4 inline-block w-full text-center bg-indigo-600 text-white px-4 py-2 rounded">Start Test</a>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="text-center mt-8">
-            <a href="{% url 'tests:test_list' %}" class="inline-block border border-indigo-600 text-indigo-600 px-4 py-2 rounded">View All Tests</a>
-        </div>
-    </div>
-</section>
-
-<!-- Subjects Overview -->
-<section class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-6">
-            <h3 class="text-2xl font-bold">Explore Subjects</h3>
-            <p class="text-gray-600">Comprehensive coverage of all GATE Mining Engineering topics</p>
-        </div>
-
-        <div class="grid gap-6 md:grid-cols-3">
-            {% for subject in subjects %}
-            <div class="bg-white rounded-lg shadow text-center p-6">
-                <i class="fas fa-book text-indigo-600 mb-3 text-2xl"></i>
-                <h5 class="font-semibold">{{ subject.name }}</h5>
-                <p class="text-gray-600">{{ subject.description|truncatewords:15 }}</p>
-                <a href="{% url 'main:subject_detail' subject.id %}" class="mt-4 inline-block border border-indigo-600 text-indigo-600 px-4 py-2 rounded">Explore</a>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No articles available yet</h4>
+                <p class="text-muted">Check back soon for expert content!</p>
             </div>
             {% endfor %}
         </div>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    // Animate counters
+    const counters = document.querySelectorAll('.stat-counter');
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries=>{
+            entries.forEach(entry=>{
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const to = parseInt(el.dataset.to || el.textContent || '0',10);
+                    let start = 0;
+                    const dur = 2000;
+                    const step = Math.ceil(to / (dur / 50));
+                    const t = setInterval(()=>{
+                        start += step;
+                        if (start >= to) { 
+                            el.textContent = to; 
+                            clearInterval(t); 
+                        } else {
+                            el.textContent = start;
+                        }
+                    }, 50);
+                    io.unobserve(el);
+                }
+            });
+        }, {threshold: 0.3});
+
+        counters.forEach(c => io.observe(c));
+    }
+});
+</script>
 {% endblock %}

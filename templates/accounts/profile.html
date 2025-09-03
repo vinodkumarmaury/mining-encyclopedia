@@ -1,42 +1,188 @@
 {% extends 'base.html' %}
+{% load custom_tags %}
 
 {% block title %}Profile - GATE Mining Prep{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-1">
-      <div class="bg-white rounded-lg shadow p-6 text-center">
-        {% if user_profile.profile_picture %}
-          <img src="{{ user_profile.profile_picture.url }}" class="mx-auto w-28 h-28 rounded-full mb-4">
-        {% else %}
-          <div class="mx-auto w-28 h-28 rounded-full bg-gray-300 flex items-center justify-center text-2xl text-white mb-4">{{ user.username|slice:":1"|upper }}</div>
-        {% endif %}
-        <h5 class="text-lg font-semibold">{{ user.get_full_name|default:user.username }}</h5>
-        <p class="text-gray-500 mb-1">{{ user_profile.college }}</p>
-        <p class="text-sm text-gray-400">Role: {{ user_profile.get_role_display }}</p>
-        <a href="{% url 'accounts:edit_profile' %}" class="mt-4 inline-block px-4 py-2 border rounded text-indigo-600">Edit Profile</a>
-      </div>
-    </div>
-    <div class="lg:col-span-2">
-      <div class="bg-white rounded-lg shadow p-6">
-        <h5 class="font-semibold mb-4">Activity</h5>
-        <div id="profileCharts" class="h-56 mb-4"></div>
-        <hr class="my-4">
-        <h6 class="font-semibold mb-2">Recent Tests</h6>
-        <div class="space-y-2">
-          {% for t in recent_tests %}
-          <div class="flex justify-between items-center py-2 border-b">
-            <div>{{ t.mock_test.title }}</div>
-            <div class="text-sm px-2 py-1 rounded {% if t.percentage >= 80 %}bg-green-100 text-green-800{% elif t.percentage >= 60 %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">{{ t.percentage|floatformat:1 }}%</div>
-          </div>
-          {% empty %}
-          <div class="py-2 text-gray-500">No recent tests</div>
-          {% endfor %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold text-white mb-3">My Profile</h1>
+                <p class="lead text-white-50 mb-4">Track your progress and manage your account</p>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Profile Information -->
+        <div class="col-lg-4">
+            <div class="card modern-card text-center">
+                <div class="card-body">
+                    {% if user_profile.profile_picture %}
+                        <img src="{{ user_profile.profile_picture.url }}" class="profile-avatar mb-3" alt="Profile Picture">
+                    {% else %}
+                        <div class="profile-avatar bg-gradient-primary d-flex align-items-center justify-content-center text-white fw-bold fs-2 mb-3">
+                            {{ user.username|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    <h5 class="fw-bold">{{ user.get_full_name|default:user.username }}</h5>
+                    <p class="text-muted mb-2">{{ user_profile.college|default:"College not specified" }}</p>
+                    <span class="badge bg-primary rounded-pill mb-3">{{ user_profile.get_role_display }}</span>
+                    
+                    <div class="row text-center mt-4">
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <div class="fw-bold text-primary">{{ user_profile.streak_days|default:0 }}</div>
+                                <small class="text-muted">Day Streak</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <div class="fw-bold text-success">{{ user_profile.total_articles_read|default:0 }}</div>
+                                <small class="text-muted">Articles Read</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <div class="fw-bold text-warning">{{ recent_tests|length }}</div>
+                                <small class="text-muted">Tests Taken</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-gradient mt-4">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Section -->
+        <div class="col-lg-8">
+            <!-- Performance Chart -->
+            <div class="card modern-card mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Performance Overview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="profileCharts" style="height: 300px;" class="d-flex align-items-center justify-content-center">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Loading performance data...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Tests -->
+            <div class="card modern-card mb-4">
+                <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-clipboard-list me-2"></i>Recent Test Attempts
+                    </h5>
+                    <a href="{% url 'tests:test_list' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Take New Test
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_tests %}
+                        <div class="list-group list-group-flush">
+                            {% for attempt in recent_tests %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="fw-semibold mb-1">{{ attempt.mock_test.title }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>{{ attempt.completed_at|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                                <span class="badge badge-{{ attempt.percentage|floatformat:0|add:0|default:0|score_badge }} rounded-pill">
+                                    {{ attempt.percentage|floatformat:1 }}%
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-clipboard-list display-4 text-muted mb-3"></i>
+                            <h6 class="fw-bold">No test attempts yet</h6>
+                            <p class="text-muted mb-3">Start your GATE preparation by taking your first test</p>
+                            <a href="{% url 'tests:test_list' %}" class="btn btn-gradient">
+                                <i class="fas fa-play me-2"></i>Take Your First Test
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Bookmarked Articles -->
+            <div class="card modern-card">
+                <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-bookmark me-2"></i>Bookmarked Articles
+                    </h5>
+                    <a href="{% url 'main:article_list' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-search me-1"></i>Browse Articles
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if bookmarks %}
+                        <div class="list-group list-group-flush">
+                            {% for bookmark in bookmarks %}
+                            <div class="list-group-item bookmark-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1 bookmark-content">
+                                        <h6 class="fw-semibold mb-2">
+                                            <a href="{% url 'main:article_detail' bookmark.article.slug %}" class="text-decoration-none">
+                                                {{ bookmark.article.title }}
+                                            </a>
+                                        </h6>
+                                        <p class="text-muted mb-2 small bookmark-meta">{{ bookmark.article.content|truncatewords:15 }}</p>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <span class="badge bg-primary">{{ bookmark.article.topic.subject.name }}</span>
+                                            <span class="badge bg-secondary">{{ bookmark.article.get_difficulty_display }}</span>
+                                            <span class="badge bg-info">{{ bookmark.article.topic.name }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-end ms-3">
+                                        <small class="text-muted d-block">
+                                            <i class="fas fa-clock me-1"></i>{{ bookmark.created_at|date:"M d" }}
+                                        </small>
+                                        <small class="text-muted d-block mt-1">
+                                            <i class="fas fa-eye me-1"></i>{{ bookmark.article.views }} views
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if bookmarks|length >= 5 %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'main:article_list' %}?bookmarked=true" class="btn btn-outline-primary">
+                                <i class="fas fa-list me-1"></i>View All Bookmarks
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-bookmark display-4 text-muted mb-3"></i>
+                            <h6 class="fw-bold">No bookmarked articles yet</h6>
+                            <p class="text-muted mb-3">Bookmark articles while reading to save them for later</p>
+                            <a href="{% url 'main:article_list' %}" class="btn btn-gradient">
+                                <i class="fas fa-book me-2"></i>Explore Articles
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

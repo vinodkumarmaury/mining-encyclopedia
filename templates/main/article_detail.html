@@ -1,73 +1,135 @@
 {% extends 'base.html' %}
+{% load reading_time %}
 
 {% block title %}{{ article.title }} - GATE Mining Prep{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <span class="inline-block bg-indigo-100 text-indigo-800 px-2 py-1 rounded">{{ article.topic.subject.name }}</span>
-                        <span class="inline-block text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded ml-2">{{ article.get_difficulty_display }}</span>
-                    </div>
-                    {% if user.is_authenticated %}
-                    <button id="bookmarkBtn" class="text-gray-600" data-article-id="{{ article.id }}" aria-label="bookmark">
-                        <i class="{% if is_bookmarked %}fas{% else %}far{% endif %} fa-bookmark"></i>
-                    </button>
-                    {% endif %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-10">
+                <div class="d-flex justify-content-center gap-2 mb-3">
+                    <span class="badge bg-primary rounded-pill">{{ article.topic.subject.name }}</span>
+                    <span class="badge bg-secondary rounded-pill">{{ article.get_difficulty_display }}</span>
                 </div>
-                <h1 class="text-3xl font-extrabold mb-2">{{ article.title }}</h1>
-                <div class="text-sm text-gray-500 mb-4">
-                    <span class="mr-4"><i class="fas fa-user mr-1"></i>{{ article.author.get_full_name|default:article.author.username }}</span>
-                    <span class="mr-4"><i class="fas fa-calendar mr-1"></i>{{ article.created_at|date:"M d, Y" }}</span>
-                    <span><i class="fas fa-eye mr-1"></i>{{ article.views }} views</span>
+                <h1 class="display-4 fw-bold text-white mb-3">{{ article.title }}</h1>
+                <div class="d-flex justify-content-center flex-wrap gap-4 text-white-50">
+                    <span><i class="fas fa-user me-1"></i>{{ article.author.get_full_name|default:article.author.username }}</span>
+                    <span><i class="fas fa-calendar me-1"></i>{{ article.created_at|date:"M d, Y" }}</span>
+                    <span><i class="fas fa-eye me-1"></i>{{ article.views }} views</span>
+                    <span><i class="fas fa-clock me-1"></i>~{{ article.content|reading_time }} min read</span>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <div class="article-content prose max-w-none">
-                    {{ article.content|linebreaks }}
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Main Article Content -->
+            <div class="card modern-card mb-5" data-aos="fade-up">
+                <div class="card-body p-4 p-md-5">
+                    {% if user.is_authenticated %}
+                    <div class="d-flex justify-content-end mb-3">
+                        <button id="bookmarkBtn" class="btn btn-outline-secondary btn-sm" data-article-id="{{ article.id }}" aria-label="bookmark">
+                            <i class="{% if is_bookmarked %}fas{% else %}far{% endif %} fa-bookmark me-1"></i>
+                            {% if is_bookmarked %}Bookmarked{% else %}Bookmark{% endif %}
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    <div class="article-content">
+                        {{ article.content|linebreaks }}
+                    </div>
                 </div>
             </div>
 
+            <!-- Related Articles -->
             {% if related_articles %}
-            <div class="mt-6">
-                <h3 class="text-lg font-semibold mb-3">Related Articles</h3>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {% for related in related_articles %}
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <h6 class="font-medium">{{ related.title|truncatechars:50 }}</h6>
-                        <p class="text-sm text-gray-600">{{ related.excerpt|truncatewords:10 }}</p>
-                        <a href="{% url 'main:article_detail' related.slug %}" class="inline-block mt-2 text-indigo-600">Read</a>
+            <div class="card modern-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header gradient-bg">
+                    <h3 class="fw-bold mb-0 text-white">
+                        <i class="fas fa-book-open me-2"></i>Related Articles
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for related in related_articles %}
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="fw-bold mb-2">{{ related.title|truncatechars:50 }}</h6>
+                                    <p class="text-muted small mb-3">{{ related.excerpt|truncatewords:10 }}</p>
+                                    <a href="{% url 'main:article_detail' related.slug %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-arrow-right me-1"></i>Read Article
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
             </div>
             {% endif %}
         </div>
 
         <!-- Sidebar -->
-        <aside class="space-y-6">
-            <div class="bg-white rounded-lg shadow p-4 sticky top-6">
-                <h6 class="font-semibold mb-2">Article Info</h6>
-                <div class="text-sm text-gray-700"><strong>Topic:</strong> {{ article.topic.name }}</div>
-                <div class="text-sm text-gray-700"><strong>Subject:</strong> {{ article.topic.subject.name }}</div>
-                <div class="text-sm text-gray-700"><strong>Difficulty:</strong> {{ article.get_difficulty_display }}</div>
-                <div class="text-sm text-gray-700"><strong>Reading Time:</strong> ~{{ article.content|reading_time }} min</div>
+        <div class="col-lg-4">
+            <!-- Article Info -->
+            <div class="card modern-card sticky-top mb-4" style="top: 2rem;" data-aos="fade-left">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="fw-bold mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Article Details
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 text-sm">
+                        <div class="col-12 mb-2">
+                            <strong class="text-primary">Topic:</strong>
+                            <div>{{ article.topic.name }}</div>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <strong class="text-primary">Subject:</strong>
+                            <div>{{ article.topic.subject.name }}</div>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <strong class="text-primary">Difficulty:</strong>
+                            <div>{{ article.get_difficulty_display }}</div>
+                        </div>
+                        <div class="col-12">
+                            <strong class="text-primary">Reading Time:</strong>
+                            <div>~{{ article.content|reading_time }} minutes</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            <!-- Personal Notes -->
             {% if user.is_authenticated %}
-            <div class="bg-white rounded-lg shadow p-4">
-                <h6 class="font-semibold mb-2">Personal Notes</h6>
-                <form id="noteForm">
-                    {% csrf_token %}
-                    <textarea id="noteContent" rows="5" class="block w-full rounded-md border-gray-300 p-2 mb-3" placeholder="Add your notes here...">{{ user_note.content|default:"" }}</textarea>
-                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded">Save Note</button>
-                </form>
-                <div id="noteAlert" class="hidden mt-3 text-sm text-green-600">Note saved successfully!</div>
+            <div class="card modern-card" data-aos="fade-left" data-aos-delay="100">
+                <div class="card-header bg-success text-white">
+                    <h6 class="fw-bold mb-0">
+                        <i class="fas fa-sticky-note me-2"></i>Personal Notes
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form id="noteForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea id="noteContent" class="form-control modern-input" rows="5" placeholder="Add your notes here...">{{ user_note.content|default:"" }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-gradient w-100">
+                            <i class="fas fa-save me-2"></i>Save Note
+                        </button>
+                    </form>
+                    <div id="noteAlert" class="alert alert-success mt-3 d-none">
+                        <i class="fas fa-check-circle me-2"></i>Note saved successfully!
+                    </div>
+                </div>
             </div>
             {% endif %}
-        </aside>
+        </div>
     </div>
 </div>
 
@@ -97,8 +159,23 @@ if (bookmarkBtn) {
         fetch(`/bookmark/${id}/`, { method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken'), 'Content-Type':'application/json'}, body: JSON.stringify({}) })
         .then(r => r.json()).then(data => {
             const icon = bookmarkBtn.querySelector('i');
-            if (data.bookmarked) { icon.classList.remove('far'); icon.classList.add('fas'); }
-            else { icon.classList.remove('fas'); icon.classList.add('far'); }
+            const text = bookmarkBtn.querySelector('span') || bookmarkBtn;
+            if (data.bookmarked) { 
+                icon.classList.remove('far'); 
+                icon.classList.add('fas'); 
+                if (text !== bookmarkBtn) text.textContent = 'Bookmarked';
+                else bookmarkBtn.innerHTML = '<i class="fas fa-bookmark me-1"></i>Bookmarked';
+            } else { 
+                icon.classList.remove('fas'); 
+                icon.classList.add('far'); 
+                if (text !== bookmarkBtn) text.textContent = 'Bookmark';
+                else bookmarkBtn.innerHTML = '<i class="far fa-bookmark me-1"></i>Bookmark';
+            }
+            
+            // Refresh bookmarks dropdown if it exists
+            if (typeof window.refreshBookmarks === 'function') {
+                window.refreshBookmarks();
+            }
         });
     });
 }
@@ -114,8 +191,8 @@ if (noteForm) {
             body: JSON.stringify({ article_id: {{ article.id }}, content: document.getElementById('noteContent').value })
         }).then(r=>r.json()).then(data=>{
             if (data.success) {
-                document.getElementById('noteAlert').classList.remove('hidden');
-                setTimeout(()=>document.getElementById('noteAlert').classList.add('hidden'), 3000);
+                document.getElementById('noteAlert').classList.remove('d-none');
+                setTimeout(()=>document.getElementById('noteAlert').classList.add('d-none'), 3000);
             }
         });
     });

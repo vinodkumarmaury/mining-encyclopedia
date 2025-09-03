@@ -3,50 +3,106 @@
 {% block title %}Register - GATE Mining Prep{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto py-12 px-4 sm:px-6 lg:px-8">
-    <div class="bg-white rounded-lg shadow p-8">
-        <div class="text-center mb-6">
-            <i class="fas fa-user-plus text-4xl text-indigo-600 mb-2"></i>
-            <h3 class="text-2xl font-bold">Join Us</h3>
-            <p class="text-gray-500">Create your account to start GATE preparation</p>
-        </div>
+<div class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-6">
+                <div class="card modern-card auth-card">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="auth-icon bg-gradient-success mb-3">
+                                <i class="fas fa-user-plus text-white"></i>
+                            </div>
+                            <h3 class="fw-bold">Join Us Today</h3>
+                            <p class="text-muted">Create your account to start your GATE preparation journey</p>
+                        </div>
 
-        <form method="post">
-            {% csrf_token %}
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Username</label>
-                    {{ form.username }}
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Register as</label>
-                    {{ form.role }}
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Password</label>
-                    {{ form.password1 }}
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                    {{ form.password2 }}
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Admin Code (optional)</label>
-                    {{ form.admin_code }}
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-user me-2"></i>Username
+                                </label>
+                                <input type="text" name="{{ form.username.name }}" 
+                                       class="form-control modern-input" 
+                                       value="{{ form.username.value|default:'' }}"
+                                       placeholder="Choose a unique username" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-user-tag me-2"></i>Register as
+                                </label>
+                                <select name="{{ form.role.name }}" class="form-select modern-input">
+                                    <option value="student">Student</option>
+                                    <option value="professor">Professor</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>Choose your role to get customized features
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                <input type="password" name="{{ form.password1.name }}" 
+                                       class="form-control modern-input" 
+                                       placeholder="Create a strong password" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-lock me-2"></i>Confirm Password
+                                </label>
+                                <input type="password" name="{{ form.password2.name }}" 
+                                       class="form-control modern-input" 
+                                       placeholder="Confirm your password" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">
+                                    <i class="fas fa-key me-2"></i>Admin Code 
+                                    <span class="text-muted">(optional)</span>
+                                </label>
+                                <input type="text" name="{{ form.admin_code.name }}" 
+                                       class="form-control modern-input" 
+                                       value="{{ form.admin_code.value|default:'' }}"
+                                       placeholder="Enter admin code if registering as admin">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>Required only for admin registration
+                                </div>
+                            </div>
+
+                            {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <button type="submit" class="btn btn-gradient w-100 py-3 fw-semibold">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-4">
+                            <p class="text-muted">
+                                Already have an account? 
+                                <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-semibold">
+                                    Sign in here
+                                </a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            {% if form.errors %}
-            <div class="mt-4 text-sm text-red-600">{{ form.errors }}</div>
-            {% endif %}
-
-            <div class="mt-6">
-                <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded">Create Account</button>
-            </div>
-        </form>
-
-        <div class="text-center mt-4">
-            <p class="text-gray-500 text-sm">Already have an account? <a href="{% url 'accounts:login' %}" class="text-indigo-600">Sign in here</a></p>
         </div>
     </div>
 </div>

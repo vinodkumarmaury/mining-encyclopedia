@@ -3,47 +3,79 @@
 {% block title %}Test Results - GATE Mining Prep{% endblock %}
 
 {% block content %}
-{% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-4">
-        <h2 class="text-2xl font-semibold">Test Results</h2>
-        <p class="text-gray-500">{{ attempt.mock_test.title }}</p>
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold text-white mb-3">Test Results</h1>
+                <p class="lead text-white-50 mb-4">{{ attempt.mock_test.title }}</p>
+            </div>
+        </div>
     </div>
+</div>
 
+<div class="container py-5">
     <!-- Score Overview -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-            <div class="text-3xl font-bold {% if attempt.percentage >= 80 %}text-green-600{% elif attempt.percentage >= 60 %}text-yellow-600{% else %}text-red-600{% endif %}">{{ attempt.percentage|floatformat:1 }}%</div>
-            <div class="text-sm text-gray-500">Overall Score</div>
+    <div class="row g-4 mb-5">
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="0">
+            <div class="card modern-card text-center h-100">
+                <div class="card-body">
+                    <div class="display-4 fw-bold {% if attempt.percentage >= 80 %}text-success{% elif attempt.percentage >= 60 %}text-warning{% else %}text-danger{% endif %} mb-2">
+                        {{ attempt.percentage|floatformat:1 }}%
+                    </div>
+                    <h6 class="text-muted">Overall Score</h6>
+                </div>
+            </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-            <div class="text-2xl font-bold text-indigo-600">{{ correct_count }}/{{ total_questions }}</div>
-            <div class="text-sm text-gray-500">Correct Answers</div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="card modern-card text-center h-100">
+                <div class="card-body">
+                    <div class="display-5 fw-bold text-primary mb-2">{{ correct_count }}/{{ total_questions }}</div>
+                    <h6 class="text-muted">Correct Answers</h6>
+                </div>
+            </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-            <div class="text-2xl font-bold text-teal-600">{{ attempt.time_taken_minutes }}m</div>
-            <div class="text-sm text-gray-500">Time Taken</div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="card modern-card text-center h-100">
+                <div class="card-body">
+                    <div class="display-5 fw-bold text-info mb-2">{{ attempt.time_taken_minutes }}m</div>
+                    <h6 class="text-muted">Time Taken</h6>
+                </div>
+            </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-4 text-center">
-            <div class="text-2xl font-bold text-gray-700">{{ attempt.total_score }}/{{ attempt.mock_test.total_marks }}</div>
-            <div class="text-sm text-gray-500">Total Marks</div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="card modern-card text-center h-100">
+                <div class="card-body">
+                    <div class="display-5 fw-bold text-dark mb-2">{{ attempt.total_score }}/{{ attempt.mock_test.total_marks }}</div>
+                    <h6 class="text-muted">Total Marks</h6>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Subject-wise Performance -->
-    <div class="bg-white rounded-lg shadow mb-6">
-        <div class="p-4 border-b">
-            <h3 class="font-semibold">Subject-wise Performance</h3>
+    <div class="card modern-card mb-5" data-aos="fade-up">
+        <div class="card-header gradient-bg">
+            <h3 class="fw-bold mb-0 text-white">
+                <i class="fas fa-chart-bar me-2"></i>Subject-wise Performance
+            </h3>
         </div>
-        <div class="p-4 space-y-4">
+        <div class="card-body">
             {% for subject, performance in subject_performance.items %}
-            <div>
-                <div class="flex justify-between mb-1">
-                    <span class="font-medium">{{ subject }}</span>
-                    <span class="text-gray-500">{{ performance.correct }}/{{ performance.total }}</span>
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold">{{ subject }}</span>
+                    <span class="badge bg-primary">{{ performance.correct }}/{{ performance.total }}</span>
                 </div>
-                <div class="w-full bg-gray-100 rounded overflow-hidden h-3">
-                    <div class="h-3" style="width: {{ performance.percentage }}%; background-color: {% if performance.percentage >= 80 %}#10B981{% elif performance.percentage >= 60 %}#F59E0B{% else %}#EF4444{% endif %};"></div>
+                <div class="progress" style="height: 12px;">
+                    <div class="progress-bar {% if performance.percentage >= 80 %}bg-success{% elif performance.percentage >= 60 %}bg-warning{% else %}bg-danger{% endif %}" 
+                         role="progressbar" 
+                         style="width: {{ performance.percentage }}%"
+                         aria-valuenow="{{ performance.percentage }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        {{ performance.percentage|floatformat:0 }}%
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -51,56 +83,68 @@
     </div>
 
     <!-- Detailed Question Analysis -->
-    <div class="bg-white rounded-lg shadow mb-6">
-        <div class="p-4 border-b">
-            <h3 class="font-semibold">Question Analysis</h3>
+    <div class="card modern-card mb-5" data-aos="fade-up">
+        <div class="card-header gradient-bg">
+            <h3 class="fw-bold mb-0 text-white">
+                <i class="fas fa-search me-2"></i>Question Analysis
+            </h3>
         </div>
-        <div class="p-4 space-y-4">
+        <div class="card-body">
             {% for answer in answers %}
-            <div class="p-4 rounded {% if answer.is_correct %}bg-green-50{% else %}bg-red-50{% endif %}">
-                <div class="flex justify-between items-start mb-2">
-                    <h6 class="font-semibold">Question {{ forloop.counter }}</h6>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm {% if answer.is_correct %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
-                        {% if answer.is_correct %}
-                            <i class="fas fa-check mr-1"></i> Correct
-                        {% else %}
-                            <i class="fas fa-times mr-1"></i> Incorrect
-                        {% endif %}
-                    </span>
-                </div>
-
-                <p class="font-medium">{{ answer.question.question_text }}</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                    <div>
-                        <strong>Your Answer:</strong>
-                        <div class="text-gray-700">{{ answer.user_answer|default:"Not answered" }}</div>
+            <div class="card {% if answer.is_correct %}border-success bg-success bg-opacity-10{% else %}border-danger bg-danger bg-opacity-10{% endif %} mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0">Question {{ forloop.counter }}</h6>
+                        <span class="badge {% if answer.is_correct %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+                            {% if answer.is_correct %}
+                                <i class="fas fa-check me-1"></i>Correct
+                            {% else %}
+                                <i class="fas fa-times me-1"></i>Incorrect
+                            {% endif %}
+                        </span>
                     </div>
-                    <div>
-                        <strong>Correct Answer:</strong>
-                        <div class="text-gray-700">{{ answer.question.correct_answer }}</div>
-                    </div>
-                </div>
 
-                {% if answer.question.explanation %}
-                <div class="mt-3 text-gray-700">
-                    <strong>Explanation:</strong>
-                    <p class="mt-1 text-gray-600">{{ answer.question.explanation }}</p>
+                    <p class="fw-medium mb-3">{{ answer.question.question_text }}</p>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <strong class="text-primary">Your Answer:</strong>
+                                <div class="mt-1">{{ answer.user_answer|default:"<em class='text-muted'>Not answered</em>" }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-success bg-opacity-10 rounded">
+                                <strong class="text-success">Correct Answer:</strong>
+                                <div class="mt-1">{{ answer.question.correct_answer }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if answer.question.explanation %}
+                    <div class="mt-3 p-3 bg-info bg-opacity-10 rounded">
+                        <strong class="text-info">
+                            <i class="fas fa-lightbulb me-1"></i>Explanation:
+                        </strong>
+                        <p class="mt-2 mb-0">{{ answer.question.explanation }}</p>
+                    </div>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
             {% endfor %}
         </div>
     </div>
 
     <!-- Actions -->
-    <div class="flex gap-3">
-        <a href="{% url 'tests:test_list' %}" class="bg-indigo-600 text-white px-4 py-2 rounded">Take Another Test</a>
-        <a href="{% url 'tests:export_pdf' attempt.id %}" class="border border-gray-300 px-4 py-2 rounded inline-flex items-center gap-2">
-            <i class="fas fa-download"></i> Export PDF
+    <div class="d-flex flex-wrap gap-3 justify-content-center" data-aos="fade-up">
+        <a href="{% url 'tests:test_list' %}" class="btn btn-gradient btn-lg">
+            <i class="fas fa-play me-2"></i>Take Another Test
         </a>
-        <a href="{% url 'analytics:recommendations' %}" class="border border-gray-300 px-4 py-2 rounded inline-flex items-center gap-2">
-            <i class="fas fa-lightbulb"></i> Get Recommendations
+        <a href="{% url 'tests:export_pdf' attempt.id %}" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-download me-2"></i>Export PDF
+        </a>
+        <a href="{% url 'analytics:recommendations' %}" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-lightbulb me-2"></i>Get Recommendations
         </a>
     </div>
 </div>

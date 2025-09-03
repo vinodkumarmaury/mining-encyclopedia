@@ -3,14 +3,20 @@ services:
     name: gate-prep-web
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
-    startCommand: gunicorn gate_prep.wsgi:application --bind 0.0.0.0:$PORT
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn gate_prep.wsgi:application"
+    disk:
+      name: gate-prep-disk
+      mountPath: /opt/render/project/src
+      sizeGB: 1
     envVars:
       - key: SECRET_KEY
-        scope: RUN_TIME
-      - key: DATABASE_URL
-        scope: RUN_TIME
+        generateValue: true
       - key: DEBUG
         value: "False"
-      - key: SITE_ADMIN_CODE
-        scope: RUN_TIME
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DJANGO_SETTINGS_MODULE
+        value: "gate_prep.settings"
+      - key: PYTHONUNBUFFERED
+        value: "1"

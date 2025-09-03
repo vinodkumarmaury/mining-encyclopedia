@@ -15,6 +15,11 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 # ALLOWED_HOSTS can be set via DJANGO_ALLOWED_HOSTS as a comma-separated list.
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
+# Add Render domain automatically
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -61,9 +66,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gate_prep.wsgi.application'
 
 # Database
+# Use SQLite for development and production (with persistent disk on Render)
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'), conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+# For Render deployment, use DATABASE_URL if provided (optional PostgreSQL upgrade path)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

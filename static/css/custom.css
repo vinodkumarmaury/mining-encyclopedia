@@ -1,31 +1,1117 @@
-/* Custom site styles */
+/* ===== GATE Mining Prep - Enhanced Design System ===== */
+
 :root {
-	--primary-color: #6c757d; /* grey */
-	--secondary-color: #adb5bd; /* light grey */
-	--dark-color: #343a40;
-	--light-color: #f8f9fa;
+    /* Primary Colors */
+    --primary-color: #0d6efd;
+    --primary-dark: #0a58ca;
+    --primary-light: #6ea8fe;
+    
+    /* Secondary Colors */
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+    
+    /* Neutral Colors */
+    --dark-color: #212529;
+    --light-color: #f8f9fa;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-400: #ced4da;
+    --gray-500: #adb5bd;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    
+    /* Shadows */
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    
+    /* Border Radius */
+    --border-radius: 0.375rem;
+    --border-radius-lg: 0.5rem;
+    --border-radius-xl: 1rem;
 }
-body { background: linear-gradient(180deg, var(--light-color) 0%, #ffffff 100%); }
-.card.professor { border-left: 6px solid var(--primary-color); }
-.profile-avatar { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
 
+/* ===== GLOBAL STYLES ===== */
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    background: linear-gradient(135deg, var(--gray-100) 0%, #ffffff 100%);
+    color: var(--dark-color);
+}
+
+/* ===== ENHANCED CARD STYLES ===== */
+.card {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+    border-color: var(--primary-light);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    padding: 1.25rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* ===== BUTTON ENHANCEMENTS ===== */
+.btn {
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    padding: 0.625rem 1.25rem;
+    transition: all 0.2s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.btn-success {
+    background: var(--gradient-success);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--gradient-warning);
+    color: white;
+}
+
+/* ===== NAVBAR ENHANCEMENTS ===== */
+.navbar {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-sm);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    transform: translateY(-1px);
+}
+
+/* ===== FEATURE CARDS ===== */
 .feature-card {
-	border-radius: 12px;
-	transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-radius: var(--border-radius-xl);
+    background: white;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid var(--gray-200);
+    height: 100%;
 }
+
 .feature-card:hover {
-	transform: translateY(-6px);
-	box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
 }
-.feature-icon { width:70px; height:70px; margin:0 auto; background:var(--secondary-color); color:#fff; display:flex; align-items:center; justify-content:center; border-radius:50%; }
 
-.navbar-brand { color: var(--primary-color) !important; }
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: var(--gradient-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 2rem;
+    box-shadow: var(--shadow);
+}
 
-/* Small counter style */
-.stat-counter { font-size: 2rem; font-weight: 700; }
+/* ===== STATS CARDS ===== */
+.stats-card {
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: var(--border-radius-xl);
+    padding: 2rem;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
 
-/* search results should overlay content */
-.search-results { z-index: 2000; }
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+}
 
-/* navbar dropdown caret visibility */
-.navbar .dropdown-toggle::after { color: rgba(255,255,255,0.9); }
+.stat-counter {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+/* ===== PROFILE STYLES ===== */
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: var(--shadow);
+}
+
+.profile-card {
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: var(--border-radius-xl);
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ===== FORM ENHANCEMENTS ===== */
+.form-control {
+    border-radius: var(--border-radius);
+    border: 2px solid var(--gray-300);
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    transform: translateY(-1px);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+/* ===== BADGE ENHANCEMENTS ===== */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.75em;
+    border-radius: var(--border-radius);
+}
+
+/* ===== PROGRESS BARS ===== */
+.progress {
+    height: 12px;
+    border-radius: var(--border-radius);
+    background-color: var(--gray-200);
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: var(--gradient-primary);
+    transition: width 0.6s ease;
+}
+
+/* ===== ALERTS ===== */
+.alert {
+    border-radius: var(--border-radius-lg);
+    border: none;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ===== QUESTION CARDS ===== */
+.question-card {
+    border-left: 4px solid var(--primary-color);
+    background: white;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 1.5rem;
+    transition: all 0.2s ease;
+}
+
+.question-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateX(4px);
+}
+
+/* ===== UTILITIES ===== */
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.shadow-custom {
+    box-shadow: var(--shadow);
+}
+
+.shadow-custom-lg {
+    box-shadow: var(--shadow-lg);
+}
+
+.rounded-custom {
+    border-radius: var(--border-radius-xl);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+    .feature-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .stat-counter {
+        font-size: 2rem;
+    }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dark-color: #ffffff;
+        --light-color: #212529;
+        --gray-100: #343a40;
+        --gray-200: #495057;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #343a40 0%, #212529 100%);
+        color: var(--dark-color);
+    }
+}
+
+/* ===== LOADING STATES ===== */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* ===== ADDITIONAL DESIGN ENHANCEMENTS ===== */
+
+/* Auth Section */
+.auth-section {
+    background: var(--gradient-primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 2rem 0;
+}
+
+.auth-card {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.auth-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* Modern Input Styles */
+.modern-input {
+    border: 2px solid #e0e6ed;
+    border-radius: var(--border-radius-lg);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.modern-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+    background: white;
+    transform: translateY(-1px);
+}
+
+.modern-input::placeholder {
+    color: #9ca3af;
+}
+
+/* Enhanced Buttons */
+.btn-gradient {
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: var(--border-radius-lg);
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+.btn-gradient:active {
+    transform: translateY(0);
+}
+
+/* Badge Variants */
+.badge-easy { 
+    background: var(--success-color) !important; 
+    color: white;
+}
+.badge-medium { 
+    background: var(--warning-color) !important; 
+    color: white;
+}
+.badge-hard { 
+    background: var(--danger-color) !important; 
+    color: white;
+}
+
+/* Article Images */
+.article-image {
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+/* Subject Icons */
+.subject-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 2rem;
+}
+
+/* Stat Items */
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+}
+
+.stat-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Empty States */
+.empty-state {
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.empty-state i {
+    opacity: 0.6;
+}
+
+/* Search Results */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+}
+
+.search-result-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: #f3f4f6;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+/* Hero Section */
+.hero-section {
+    background: var(--gradient-primary);
+    padding: 4rem 0 2rem;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+}
+
+/* Modern Cards */
+.modern-card {
+    border: none;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    background: white;
+    overflow: hidden;
+}
+
+.modern-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.gradient-border {
+    background: var(--gradient-primary);
+    padding: 2px;
+    border-radius: var(--border-radius-xl);
+}
+
+.gradient-border .card-body {
+    background: white;
+    border-radius: var(--border-radius-xl);
+    margin: 0;
+}
+
+/* Pagination */
+.pagination .page-link {
+    border: none;
+    border-radius: var(--border-radius-lg);
+    margin: 0 2px;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--gradient-primary);
+    border: none;
+}
+
+.pagination .page-link:hover {
+    background: var(--gray-100);
+    color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* List Group Enhancements */
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem;
+    transition: background-color 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: #f8fafc;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0 1rem;
+    }
+    
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .auth-section {
+        padding: 1rem 0;
+    }
+    
+    .auth-card .card-body {
+        padding: 2rem 1.5rem;
+    }
+    
+    .modern-card {
+        margin-bottom: 1rem;
+    }
+    
+    .stat-item {
+        padding: 0.5rem;
+    }
+    
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .subject-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+
+/* Article Content Styling */
+.article-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.article-content h1, .article-content h2, .article-content h3,
+.article-content h4, .article-content h5, .article-content h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.article-content p {
+    margin-bottom: 1.5rem;
+}
+
+.article-content ul, .article-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.article-content li {
+    margin-bottom: 0.5rem;
+}
+
+.article-content blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    background: var(--light-bg);
+    padding: 1rem 1.5rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.article-content code {
+    background: var(--light-bg);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+}
+
+.article-content pre {
+    background: var(--dark-bg);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+.article-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.article-content th, .article-content td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.article-content th {
+    background: var(--primary-gradient);
+    color: white;
+    font-weight: 600;
+}
+
+/* Dropdown Z-Index Fixes - Enhanced */
+.navbar {
+    z-index: 1100 !important;
+    position: relative;
+}
+
+.navbar .dropdown-menu {
+    z-index: 1200 !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    overflow: visible;
+    margin-top: 0.25rem;
+}
+
+.navbar .dropdown {
+    position: static;
+}
+
+.navbar .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+}
+
+.dropdown-menu {
+    z-index: 1200 !important;
+    box-shadow: var(--shadow-lg);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    padding: 0.5rem 0;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1.5rem;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.dropdown-item:hover {
+    background: var(--light-bg);
+    color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.dropdown-item:focus {
+    background: var(--light-bg);
+    color: var(--primary-color);
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #e5e7eb;
+}
+
+/* Search Dropdown */
+.search-results {
+    z-index: 1040 !important;
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+/* User Profile Dropdown - Specific fixes for Analytics/Recommendations */
+#navbarDropdown + .dropdown-menu {
+    z-index: 1250 !important;
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+    margin-top: 0.25rem;
+    min-width: 220px;
+    max-width: 300px;
+}
+
+/* Bookmarks Dropdown */
+#bookmarksDropdown + .dropdown-menu {
+    z-index: 1240 !important;
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+}
+
+/* Force dropdown visibility on all pages */
+.navbar .dropdown-menu.show {
+    z-index: 1300 !important;
+    position: absolute !important;
+    display: block !important;
+    transform: none !important;
+}
+
+/* Additional debugging and visibility fixes */
+.dropdown-menu {
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    background: white !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Specific fixes for problematic pages */
+.hero-section, .hero-section * {
+    z-index: 1 !important;
+}
+
+.card, .modern-card {
+    z-index: 1 !important;
+}
+
+.card *, .modern-card * {
+    z-index: auto !important;
+}
+
+/* Override any potential conflicting z-index */
+.container, .row, .col, main, section, article {
+    z-index: 1 !important;
+}
+
+/* Ensure Bootstrap components don't interfere */
+.btn, .form-control, .input-group, .table {
+    z-index: auto !important;
+}
+
+/* Specific page fixes for dropdown visibility */
+/* Articles page */
+.article-list-container, .search-section, .filter-section {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Tests page */
+.test-list-container, .test-grid {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Subjects page */
+.subject-grid, .subject-cards {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Leaderboard page */
+.leaderboard-container, .ranking-table {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Force navbar and dropdowns to highest priority */
+.navbar {
+    z-index: 1100 !important;
+    position: relative;
+    width: 100%;
+}
+
+.navbar .dropdown-menu {
+    z-index: 1500 !important;
+    position: absolute !important;
+    display: none;
+}
+
+.navbar .dropdown-menu.show {
+    z-index: 1500 !important;
+    position: absolute !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    margin-top: 0;
+}
+
+/* Override any Bootstrap positioning issues */
+.dropdown-toggle::after {
+    margin-left: 0.5em;
+}
+
+/* Ensure dropdown stays visible */
+.navbar .dropdown:hover .dropdown-menu,
+.navbar .dropdown.show .dropdown-menu {
+    z-index: 1500 !important;
+    display: block !important;
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+}
+
+/* Modal and overlay z-index hierarchy */
+.modal {
+    z-index: 1050 !important;
+}
+
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+.tooltip {
+    z-index: 1070 !important;
+}
+
+.popover {
+    z-index: 1060 !important;
+}
+
+/* Sticky elements should not interfere with dropdowns */
+.sticky-top {
+    z-index: 1020;
+}
+
+/* Ensure cards don't overflow dropdowns */
+.card {
+    z-index: 1;
+    position: relative;
+}
+
+.modern-card:hover {
+    z-index: 2;
+}
+
+/* Hero sections should not interfere */
+.hero-section {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Page content containers */
+.container, .container-fluid {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Search forms and inputs */
+.search-form, .form-control, .input-group {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Tables and content sections */
+.table-responsive, .content-section {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Specific page elements that might interfere */
+.article-content, .test-content, .subject-content {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Ensure main content doesn't interfere with navigation */
+main {
+    z-index: 1 !important;
+    position: relative;
+}
+
+/* Bootstrap components should not interfere */
+.row, .col, .col-md-6, .col-lg-8, .col-xl-9 {
+    z-index: 1;
+    position: relative;
+}
+
+/* Article and test cards */
+.article-card, .test-card, .subject-card {
+    z-index: 1;
+    position: relative;
+}
+
+/* Filter sections */
+.filter-section, .search-section {
+    z-index: 1;
+    position: relative;
+}
+
+/* Bookmark Section Enhancements */
+.bookmark-item {
+    transition: all 0.3s ease;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 0.5rem;
+}
+
+.bookmark-item:hover {
+    background: var(--light-bg);
+    transform: translateX(5px);
+}
+
+.bookmark-meta {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.bookmark-content {
+    line-height: 1.4;
+}
+
+/* Fix for overflow hidden breaking dropdowns */
+.hero-section,
+.container,
+.row,
+.col-lg-8,
+.col-lg-4,
+.card-body {
+    overflow: visible;
+}
+
+/* Bookmarks Dropdown Styling */
+.bookmarks-dropdown {
+    z-index: 1035 !important;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+}
+
+.bookmarks-dropdown .dropdown-header {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 1rem 1.5rem;
+    margin: 0;
+    border: none;
+    font-weight: 600;
+}
+
+.bookmarks-dropdown .dropdown-header .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.bookmarks-dropdown .dropdown-header .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+.bookmark-dropdown-item {
+    transition: all 0.2s ease;
+    margin: 0.25rem 0;
+    border-radius: var(--border-radius);
+}
+
+.bookmark-dropdown-item:hover {
+    background: var(--light-bg);
+    transform: translateX(5px);
+}
+
+.bookmark-dropdown-item:last-child {
+    border-bottom: none !important;
+}
+
+.bookmark-dropdown-item h6 {
+    font-size: 0.9rem;
+    line-height: 1.3;
+}
+
+.bookmark-dropdown-item p {
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
+.bookmark-dropdown-item .badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+}
+
+/* Ensure bookmarks dropdown appears above everything */
+.navbar .dropdown-menu.bookmarks-dropdown {
+    z-index: 1035 !important;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    margin-top: 0.5rem;
+}
+
+/* Mobile responsiveness for bookmarks dropdown */
+@media (max-width: 768px) {
+    .bookmarks-dropdown {
+        min-width: 280px !important;
+        max-width: 90vw;
+    }
+    
+    .bookmark-dropdown-item h6 {
+        font-size: 0.85rem;
+    }
+    
+    .bookmark-dropdown-item p {
+        font-size: 0.75rem;
+    }
+}

@@ -15,139 +15,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Tailwind build (generated) -->
-    <link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
-    <!-- Project custom CSS (optional overrides) -->
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Project custom CSS (enhanced design system) -->
     <link href="{% static 'css/custom.css' %}" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary-color: #007bff;
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --dark-color: #343a40;
-            --light-color: #f8f9fa;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-        }
-        
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-        
-        .card {
-            border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease-in-out;
-        }
-        
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-        
-        .btn {
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.2s ease-in-out;
-        }
-        
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-        
-        .progress {
-            height: 8px;
-            border-radius: 4px;
-        }
-        
-        .badge {
-            font-weight: 500;
-            padding: 0.5em 0.75em;
-        }
-        
-        .footer {
-            background: var(--dark-color);
-            color: white;
-            padding: 3rem 0 1rem;
-            margin-top: auto;
-        }
-        
-        .hero-section {
-            background: linear-gradient(135deg, var(--primary-color), #6610f2);
-            color: white;
-            padding: 4rem 0;
-        }
-        
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            margin: 0 auto 1rem;
-        }
-        
-        .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 2rem;
-        }
-        
-        .activity-chart {
-            height: 300px;
-        }
-        
-        .question-card {
-            border-left: 4px solid var(--primary-color);
-        }
-        
-        .correct-answer {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-        
-        .incorrect-answer {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
-        
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-top: none;
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .search-result-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .search-result-item:hover {
-            background-color: #f8f9fa;
-        }
-    </style>
     
     {% block extra_css %}{% endblock %}
     <!-- Custom styles for role-based dashboards, etc. can be added here -->
@@ -162,81 +35,131 @@
         </script>
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <!-- Navigation (Tailwind + Alpine.js) -->
-    <nav class="bg-indigo-600 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div x-data="{ open: false, userMenu: false }" class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="{% url 'main:home' %}" class="flex items-center space-x-2">
-                        <i class="fas fa-graduation-cap text-xl"></i>
-                        <span class="font-bold text-lg">GATE Mining Prep</span>
-                    </a>
-                    <div class="hidden md:flex md:ml-10 md:space-x-6 ml-6">
-                        <a href="{% url 'main:home' %}" class="hover:underline">Home</a>
-                        <a href="{% url 'main:article_list' %}" class="hover:underline">Articles</a>
-                        <a href="{% url 'tests:test_list' %}" class="hover:underline">Mock Tests</a>
-                        <a href="{% url 'main:subject_list' %}" class="hover:underline">Subjects</a>
-                        <a href="{% url 'tests:leaderboard' %}" class="hover:underline">Leaderboard</a>
-                    </div>
-                </div>
-
-                <div class="flex items-center">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'main:home' %}">
+                <i class="fas fa-graduation-cap me-2 fs-4"></i>
+                <span class="fw-bold">GATE Mining Prep</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:article_list' %}">Articles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tests:test_list' %}">Mock Tests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:subject_list' %}">Subjects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tests:leaderboard' %}">Leaderboard</a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'main:dashboard' %}" class="hidden sm:inline-flex items-center px-3 py-2 bg-indigo-500 rounded-md text-white mr-3">Dashboard</a>
-                        <div class="relative">
-                            <button @click="userMenu = !userMenu" class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-indigo-500">
-                                <i class="fas fa-user"></i>
-                                <span>{{ user.username }}</span>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-light btn-sm me-2" href="{% url 'main:dashboard' %}">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <!-- Bookmarks Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="bookmarksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bookmark me-1"></i>
+                                <span class="d-none d-md-inline">Bookmarks</span>
+                                <span id="bookmarkCount" class="badge bg-light text-primary ms-1"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end bookmarks-dropdown" style="min-width: 350px;">
+                                <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-bookmark me-2"></i>My Bookmarks</span>
+                                    <a href="{% url 'main:article_list' %}?bookmarked=true" class="btn btn-sm btn-outline-primary">View All</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <div id="bookmarksList" class="px-3" style="max-height: 400px; overflow-y: auto;">
+                                    <div class="text-center py-3">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="small text-muted mt-2 mb-0">Loading bookmarks...</p>
+                                    </div>
+                                </div>
+                                <li><hr class="dropdown-divider"></li>
+                                <li class="text-center p-2">
+                                    <a href="{% url 'main:article_list' %}" class="btn btn-sm btn-gradient">
+                                        <i class="fas fa-plus me-1"></i>Explore Articles
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- User Profile Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-2"></i>
+                                {{ user.username }}
                                 {% with user.userprofile.role as role %}
-                                    <small class="text-indigo-200">({{ role }})</small>
+                                    <small class="text-light ms-1">({{ role }})</small>
                                 {% endwith %}
-                            </button>
-                            <div x-show="userMenu" @click.away="userMenu = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-lg py-1 z-50">
-                                <a class="block px-4 py-2 hover:bg-gray-100" href="{% url 'accounts:profile' %}">Profile</a>
-                                <a class="block px-4 py-2 hover:bg-gray-100" href="{% url 'analytics:recommendations' %}">Recommendations</a>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'analytics:recommendations' %}">
+                                    <i class="fas fa-chart-line me-2"></i>Recommendations
+                                </a></li>
                                 {% if user.is_staff %}
-                                    <div class="border-t my-1"></div>
-                                    <a class="block px-4 py-2 hover:bg-gray-100" href="{% url 'analytics:dashboard' %}">Analytics</a>
-                                    <a class="block px-4 py-2 hover:bg-gray-100" href="/admin/">Admin Panel</a>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'analytics:dashboard' %}">
+                                        <i class="fas fa-analytics me-2"></i>Analytics
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/admin/">
+                                        <i class="fas fa-cog me-2"></i>Admin Panel
+                                    </a></li>
                                 {% endif %}
-                                <div class="border-t my-1"></div>
-                                <a class="block px-4 py-2 hover:bg-gray-100" href="{% url 'accounts:logout' %}">Logout</a>
-                            </div>
-                        </div>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </li>
                     {% else %}
-                        <div class="hidden md:flex md:items-center md:space-x-3">
-                            <a href="{% url 'accounts:login' %}" class="px-3 py-2 rounded-md hover:bg-indigo-500">Login</a>
-                            <a href="{% url 'accounts:register' %}" class="px-3 py-2 bg-white text-indigo-600 rounded-md font-medium">Register</a>
-                        </div>
-                        <button @click="open = !open" class="md:hidden p-2 rounded-md hover:bg-indigo-500">
-                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-light text-primary ms-2" href="{% url 'accounts:register' %}">Register</a>
+                        </li>
                     {% endif %}
-                </div>
-            </div>
-            <!-- Mobile menu -->
-            <div x-show="open" x-cloak class="md:hidden">
-                <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="{% url 'main:home' %}" class="block px-3 py-2 rounded-md">Home</a>
-                    <a href="{% url 'main:article_list' %}" class="block px-3 py-2 rounded-md">Articles</a>
-                    <a href="{% url 'tests:test_list' %}" class="block px-3 py-2 rounded-md">Mock Tests</a>
-                    <a href="{% url 'main:subject_list' %}" class="block px-3 py-2 rounded-md">Subjects</a>
-                    <a href="{% url 'tests:leaderboard' %}" class="block px-3 py-2 rounded-md">Leaderboard</a>
-                    <div class="border-t my-2"></div>
-                    <a href="{% url 'accounts:login' %}" class="block px-3 py-2 rounded-md">Login</a>
-                    <a href="{% url 'accounts:register' %}" class="block px-3 py-2 rounded-md">Register</a>
-                </div>
+                </ul>
             </div>
         </div>
     </nav>
 
     <!-- Messages -->
     {% if messages %}
-        <div class="container mt-3">
+        <div class="container-fluid">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show m-3 shadow-sm" role="alert">
+                    {% if message.tags == 'error' %}
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% elif message.tags == 'success' %}
+                        <i class="fas fa-check-circle me-2"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                    {% else %}
+                        <i class="fas fa-info-circle me-2"></i>
+                    {% endif %}
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -245,25 +168,53 @@
     {% endif %}
 
     <!-- Main Content -->
-    <main class="flex-grow-1">
+    <main class="flex-grow-1 py-4">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="bg-dark text-light py-5 mt-auto">
         <div class="container">
-            <div class="row">
+            <div class="row g-4">
                 <div class="col-md-6">
-                    <h5>GATE Mining Prep Platform</h5>
-                    <p>Your comprehensive preparation platform for GATE Mining Engineering exam.</p>
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-graduation-cap me-2"></i>
+                        GATE Mining Prep Platform
+                    </h5>
+                    <p class="text-light-emphasis">Your comprehensive preparation platform for GATE Mining Engineering exam with mock tests, articles, and performance analytics.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-light fs-4"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light fs-4"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light fs-4"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-light fs-4"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'main:home' %}" class="text-light-emphasis text-decoration-none">Home</a></li>
+                        <li><a href="{% url 'main:article_list' %}" class="text-light-emphasis text-decoration-none">Articles</a></li>
+                        <li><a href="{% url 'tests:test_list' %}" class="text-light-emphasis text-decoration-none">Mock Tests</a></li>
+                        <li><a href="{% url 'main:subject_list' %}" class="text-light-emphasis text-decoration-none">Subjects</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light-emphasis text-decoration-none">Help Center</a></li>
+                        <li><a href="#" class="text-light-emphasis text-decoration-none">Contact Us</a></li>
+                        <li><a href="#" class="text-light-emphasis text-decoration-none">Privacy Policy</a></li>
+                        <li><a href="#" class="text-light-emphasis text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 text-light-emphasis">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-light-emphasis">&copy; 2025 GATE Mining Prep. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p>&copy; 2025 GATE Mining Prep. All rights reserved.</p>
-                    <div class="social-links">
-                        <a href="#" class="text-light me-3"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-light"><i class="fab fa-linkedin"></i></a>
-                    </div>
+                    <small class="text-light-emphasis">Made with <i class="fas fa-heart text-danger"></i> for GATE aspirants</small>
                 </div>
             </div>
         </div>
@@ -287,5 +238,205 @@
                 }
             });
         </script>
+        
+        <!-- Bookmarks Dropdown JavaScript -->
+        {% if user.is_authenticated %}
+        <script>
+            let bookmarksLoaded = false;
+            
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            function loadBookmarks() {
+                fetch('/api/bookmarks/')
+                    .then(response => response.json())
+                    .then(data => {
+                        const bookmarksList = document.getElementById('bookmarksList');
+                        const bookmarkCount = document.getElementById('bookmarkCount');
+                        
+                        if (data.bookmarks && data.bookmarks.length > 0) {
+                            bookmarkCount.textContent = data.bookmarks.length;
+                            bookmarkCount.style.display = 'inline';
+                            
+                            let html = '';
+                            data.bookmarks.slice(0, 5).forEach(bookmark => {
+                                html += `
+                                    <div class="bookmark-dropdown-item py-2 border-bottom">
+                                        <a href="/articles/${bookmark.article.slug}/" class="text-decoration-none">
+                                            <h6 class="mb-1 fw-semibold text-dark">${bookmark.article.title}</h6>
+                                        </a>
+                                        <p class="small text-muted mb-1">${bookmark.article.excerpt}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="badge bg-primary">${bookmark.article.subject}</span>
+                                                <span class="badge bg-secondary">${bookmark.article.difficulty}</span>
+                                            </div>
+                                            <small class="text-muted">${bookmark.created_at}</small>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            bookmarksList.innerHTML = html;
+                        } else {
+                            bookmarkCount.style.display = 'none';
+                            bookmarksList.innerHTML = `
+                                <div class="text-center py-3">
+                                    <i class="fas fa-bookmark display-6 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No bookmarks yet</p>
+                                    <small class="text-muted">Start bookmarking articles!</small>
+                                </div>
+                            `;
+                        }
+                        bookmarksLoaded = true;
+                    })
+                    .catch(error => {
+                        console.error('Error loading bookmarks:', error);
+                        document.getElementById('bookmarksList').innerHTML = `
+                            <div class="text-center py-3">
+                                <p class="text-danger mb-0">Error loading bookmarks</p>
+                            </div>
+                        `;
+                    });
+            }
+            
+            // Function to refresh bookmarks (called after bookmark toggle)
+            function refreshBookmarks() {
+                bookmarksLoaded = false;
+                loadBookmarks();
+            }
+            
+            // Make functions globally accessible
+            window.loadBookmarks = loadBookmarks;
+            window.refreshBookmarks = refreshBookmarks;
+            window.bookmarksLoaded = bookmarksLoaded;
+            
+            // Load bookmarks when dropdown is shown
+            document.getElementById('bookmarksDropdown').addEventListener('show.bs.dropdown', function() {
+                if (!bookmarksLoaded) {
+                    loadBookmarks();
+                }
+            });
+            
+            // Dropdown visibility fixes
+            function ensureDropdownVisibility() {
+                // Fix for all dropdowns to ensure they're always visible
+                const dropdownElements = document.querySelectorAll('.dropdown-menu');
+                dropdownElements.forEach(dropdown => {
+                    dropdown.style.zIndex = '1200';
+                    dropdown.style.position = 'absolute';
+                });
+                
+                // Fix navbar positioning
+                const navbar = document.querySelector('.navbar');
+                if (navbar) {
+                    navbar.style.zIndex = '1100';
+                    navbar.style.position = 'relative';
+                }
+                
+                // Ensure page content doesn't interfere
+                const mainContent = document.querySelector('main');
+                if (mainContent) {
+                    mainContent.style.zIndex = '1';
+                    mainContent.style.position = 'relative';
+                }
+                
+                // Fix container positioning
+                const containers = document.querySelectorAll('.container, .container-fluid');
+                containers.forEach(container => {
+                    container.style.zIndex = '1';
+                    container.style.position = 'relative';
+                });
+            }
+            
+            // Apply fixes when page loads
+            document.addEventListener('DOMContentLoaded', ensureDropdownVisibility);
+            
+            // Re-apply fixes when dropdowns are shown
+            document.addEventListener('show.bs.dropdown', function(e) {
+                setTimeout(() => {
+                    const dropdown = e.target.nextElementSibling;
+                    if (dropdown && dropdown.classList.contains('dropdown-menu')) {
+                        dropdown.style.zIndex = '1200';
+                        dropdown.style.position = 'absolute';
+                        dropdown.style.transform = 'none';
+                    }
+                }, 10);
+            });
+            
+            // Handle dropdown positioning for navbar dropdowns
+            document.querySelectorAll('.navbar .dropdown').forEach(dropdown => {
+                dropdown.addEventListener('show.bs.dropdown', function() {
+                    const dropdownMenu = this.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        dropdownMenu.style.position = 'absolute';
+                        dropdownMenu.style.top = '100%';
+                        dropdownMenu.style.right = '0';
+                        dropdownMenu.style.left = 'auto';
+                        dropdownMenu.style.zIndex = '1500';
+                        dropdownMenu.style.transform = 'none';
+                        dropdownMenu.style.opacity = '1';
+                        dropdownMenu.style.visibility = 'visible';
+                    }
+                });
+                
+                dropdown.addEventListener('shown.bs.dropdown', function() {
+                    const dropdownMenu = this.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        // Force visibility after Bootstrap animation
+                        setTimeout(() => {
+                            dropdownMenu.style.zIndex = '1500';
+                            dropdownMenu.style.display = 'block';
+                            dropdownMenu.style.opacity = '1';
+                            dropdownMenu.style.visibility = 'visible';
+                        }, 50);
+                    }
+                });
+            });
+            
+            // Additional fixes for dropdown visibility
+            function forceDropdownVisibility() {
+                const allDropdowns = document.querySelectorAll('.dropdown-menu.show');
+                allDropdowns.forEach(dropdown => {
+                    dropdown.style.zIndex = '1500';
+                    dropdown.style.position = 'absolute';
+                    dropdown.style.display = 'block';
+                    dropdown.style.opacity = '1';
+                    dropdown.style.visibility = 'visible';
+                    dropdown.style.transform = 'none';
+                });
+            }
+            
+            // Monitor for dropdown changes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const target = mutation.target;
+                        if (target.classList.contains('dropdown-menu') && target.classList.contains('show')) {
+                            forceDropdownVisibility();
+                        }
+                    }
+                });
+            });
+            
+            // Start observing
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                    observer.observe(dropdown, { attributes: true });
+                });
+            });
+        </script>
+        {% endif %}
 </body>
 </html>

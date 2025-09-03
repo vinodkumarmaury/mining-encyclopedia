@@ -9,6 +9,7 @@ from .forms import ArticleCreateForm
 from tests.models import TestAttempt, MockTest
 from accounts.models import UserProfile
 import json
+from django.utils import timezone
 
 def home(request):
     featured_articles = Article.objects.filter(is_published=True)[:6]
@@ -88,6 +89,7 @@ def article_list(request):
     subject_filter = request.GET.get('subject')
     difficulty_filter = request.GET.get('difficulty')
     search_query = request.GET.get('search')
+    bookmarked_filter = request.GET.get('bookmarked')
     
     if subject_filter:
         articles_qs = articles_qs.filter(topic__subject_id=subject_filter)
@@ -101,6 +103,10 @@ def article_list(request):
             Q(content__icontains=search_query) |
             Q(excerpt__icontains=search_query)
         )
+    
+    # Bookmarks filter - only for authenticated users
+    if bookmarked_filter and request.user.is_authenticated:
+        articles_qs = articles_qs.filter(bookmark__user=request.user)
 
     # Pagination
     paginator = Paginator(articles_qs, 9)
@@ -116,6 +122,7 @@ def article_list(request):
         'current_subject': int(subject_filter) if subject_filter else None,
         'current_difficulty': difficulty_filter,
         'search_query': search_query,
+        'bookmarked_filter': bookmarked_filter,
         'page_obj': page_obj,
     }
     return render(request, 'main/article_list.html', context)
@@ -232,3 +239,30 @@ def subject_detail(request, subject_id):
         'tests': tests,
     }
     return render(request, 'main/subject_detail.html', context)
+
+@login_required
+def bookmarks_api(request):
+    """API endpoint to fetch user's bookmarks for the navigation dropdown"""
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related('article', 'article__topic', 'article__topic__subject').order_by('-created_at')[:10]
+    
+    bookmarks_data = []
+    for bookmark in bookmarks:
+        article = bookmark.article
+        bookmarks_data.append({
+            'id': bookmark.id,
+            'created_at': bookmark.created_at.strftime('%b %d'),
+            'article': {
+                'id': article.id,
+                'title': article.title,
+                'slug': article.slug,
+                'excerpt': article.excerpt or article.content[:100] + '...' if len(article.content) > 100 else article.content,
+                'subject': article.topic.subject.name,
+                'difficulty': article.get_difficulty_display(),
+                'views': article.views,
+            }
+        })
+    
+    return JsonResponse({
+        'bookmarks': bookmarks_data,
+        'count': len(bookmarks_data)
+    })
