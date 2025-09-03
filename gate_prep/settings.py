@@ -74,12 +74,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gate_prep.wsgi.application'
 
 # Database
-# Use SQLite for development, PostgreSQL for production on Render
-if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
-    # Production on Render - use PostgreSQL
+# Check for DATABASE_URL first (PostgreSQL), fallback to SQLite
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    # Production with PostgreSQL (when DATABASE_URL is provided)
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
+elif os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+    # Production on Render without DATABASE_URL - use SQLite with persistent disk
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+    # Try to use persistent disk if available
+    PERSISTENT_DISK_PATH = '/opt/render/project/data'
+    if os.path.exists(PERSISTENT_DISK_PATH):
+        DATABASES['default']['NAME'] = os.path.join(PERSISTENT_DISK_PATH, 'db.sqlite3')
 else:
     # Development - use SQLite
     DATABASES = {
