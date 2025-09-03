@@ -13,29 +13,6 @@ from django.utils import timezone
 
 def home(request):
     try:
-        # Force migrations if tables don't exist
-        from django.core.management import execute_from_command_line
-        from django.db import connection
-        
-        # Check if main_subject table exists
-        with connection.cursor() as cursor:
-            try:
-                cursor.execute("SELECT COUNT(*) FROM main_subject LIMIT 1")
-            except Exception as e:
-                if "does not exist" in str(e):
-                    # Tables don't exist, run migrations
-                    try:
-                        execute_from_command_line(['manage.py', 'migrate'])
-                        # After migration, load sample data
-                        import subprocess
-                        subprocess.run(['python', 'load_sample_data.py'], capture_output=True)
-                        return HttpResponse("Migrations completed! <a href='/'>Refresh the page</a>")
-                    except Exception as migration_error:
-                        return HttpResponse(f"Migration failed: {str(migration_error)}")
-                else:
-                    raise e
-        
-        # If we get here, tables should exist
         featured_articles = Article.objects.select_related('topic__subject', 'author').filter(is_published=True)[:6]
         featured_tests = MockTest.objects.filter(is_featured=True, is_active=True)[:4]
         subjects = Subject.objects.all()[:6]
@@ -46,12 +23,27 @@ def home(request):
             'subjects': subjects,
         }
         return render(request, 'main/home.html', context)
-        
     except Exception as e:
         import logging
         logger = logging.getLogger(__name__)
         logger.error(f"Error in home view: {str(e)}")
-        return HttpResponse(f"Error in home view: {str(e)}", status=500)
+        
+        # If database tables don't exist, show a helpful message
+        if "does not exist" in str(e):
+            return HttpResponse("""
+                <h1>Database Setup in Progress</h1>
+                <p>The database tables are being created. Please wait a moment and refresh the page.</p>
+                <p>If this message persists, the database migrations may not have completed successfully.</p>
+                <a href="/">Refresh Page</a>
+            """)
+        
+        # For other errors, return empty context
+        context = {
+            'featured_articles': [],
+            'featured_tests': [],
+            'subjects': [],
+        }
+        return render(request, 'main/home.html', context)
 
 @login_required
 def dashboard(request):
