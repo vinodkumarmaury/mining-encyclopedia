@@ -1,10 +1,58 @@
 from django.urls import path
 from . import views
+from django.http import JsonResponse
+
+def debug_db(request):
+    """Quick database debug endpoint"""
+    try:
+        from django.db import connection
+        from .models import Subject, Topic, Article
+        from tests.models import MockTest
+        
+        info = {
+            'database_connected': False,
+            'tables_exist': {},
+            'counts': {},
+            'errors': []
+        }
+        
+        # Test connection
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT version()")
+                version = cursor.fetchone()
+                info['database_connected'] = True
+                info['database_version'] = version[0][:50] if version else 'Unknown'
+        except Exception as e:
+            info['errors'].append(f"Connection error: {str(e)}")
+        
+        # Test each model
+        models_to_test = [
+            ('Subject', Subject),
+            ('Topic', Topic), 
+            ('Article', Article),
+            ('MockTest', MockTest)
+        ]
+        
+        for name, model in models_to_test:
+            try:
+                count = model.objects.count()
+                info['tables_exist'][name] = True
+                info['counts'][name] = count
+            except Exception as e:
+                info['tables_exist'][name] = False
+                info['errors'].append(f"{name}: {str(e)}")
+        
+        return JsonResponse(info, indent=2)
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 app_name = 'main'
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('debug-db/', debug_db, name='debug_db'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('articles/', views.article_list, name='article_list'),
     path('articles/create/', views.article_create, name='article_create'),
