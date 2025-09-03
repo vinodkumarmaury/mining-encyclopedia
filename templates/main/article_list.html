@@ -3,92 +3,66 @@
 {% block title %}Articles - GATE Mining Prep{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h2>Articles</h2>
-            <p class="text-muted">Comprehensive study materials for GATE Mining Engineering</p>
-        </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold">Articles</h2>
+        <p class="text-gray-600">Comprehensive study materials for GATE Mining Engineering</p>
     </div>
-    
+
     <!-- Search and Filters -->
-    <div class="row mb-4">
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <form method="GET" class="row g-3">
-                        <div class="col-md-4">
-                            <div class="position-relative">
-                                <input type="text" class="form-control" name="search" 
-                                       placeholder="Search articles..." value="{{ search_query }}"
-                                       id="searchInput">
-                                <div id="searchResults" class="search-results"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <select name="subject" class="form-select">
-                                <option value="">All Subjects</option>
-                                {% for subject in subjects %}
-                                <option value="{{ subject.id }}" {% if current_subject == subject.id %}selected{% endif %}>
-                                    {{ subject.name }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select name="difficulty" class="form-select">
-                                <option value="">All Difficulties</option>
-                                {% for value, label in difficulties %}
-                                <option value="{{ value }}" {% if current_difficulty == value %}selected{% endif %}>
-                                    {{ label }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">Filter</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="mb-6">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-8 gap-3 items-end">
+            <div class="md:col-span-3 relative">
+                <input id="searchInput" name="search" value="{{ search_query }}" placeholder="Search articles..." class="block w-full rounded-md border-gray-300 shadow-sm p-2">
+                <div id="searchResults" class="search-results"></div>
             </div>
-        </div>
+            <div class="md:col-span-2">
+                <select name="subject" class="block w-full rounded-md border-gray-300 p-2">
+                    <option value="">All Subjects</option>
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}" {% if current_subject == subject.id %}selected{% endif %}>{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="md:col-span-2">
+                <select name="difficulty" class="block w-full rounded-md border-gray-300 p-2">
+                    <option value="">All Difficulties</option>
+                    {% for value, label in difficulties %}
+                    <option value="{{ value }}" {% if current_difficulty == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="md:col-span-1">
+                <button type="submit" class="w-full bg-indigo-600 text-white px-4 py-2 rounded">Filter</button>
+            </div>
+        </form>
     </div>
-    
+
     <!-- Articles Grid -->
-    <div class="row g-4">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {% for article in articles %}
-        <div class="col-lg-4 col-md-6">
-            <div class="card h-100">
+        <div data-aos="fade-up" data-aos-delay="100">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
                 {% if article.featured_image %}
-                    <img src="{{ article.featured_image.url }}" class="card-img-top" alt="{{ article.title }}">
+                    <img src="{{ article.featured_image.url }}" class="w-full h-48 object-cover" alt="{{ article.title }}">
                 {% else %}
-                    <img src="https://images.pexels.com/photos/256455/pexels-photo-256455.jpeg" 
-                         class="card-img-top" alt="{{ article.title }}">
+                    <img src="https://images.pexels.com/photos/256455/pexels-photo-256455.jpeg" class="w-full h-48 object-cover" alt="{{ article.title }}">
                 {% endif %}
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="badge bg-primary">{{ article.topic.subject.name }}</span>
-                        <span class="badge bg-{{ article.difficulty|yesno:'danger,warning,success' }}">
-                            {{ article.get_difficulty_display }}
-                        </span>
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="inline-block bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-sm">{{ article.topic.subject.name }}</span>
+                        <span class="inline-block text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded">{{ article.get_difficulty_display }}</span>
                     </div>
-                    <h5 class="card-title">{{ article.title }}</h5>
-                    <p class="card-text">{{ article.excerpt|truncatewords:20 }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">
-                            <i class="fas fa-eye"></i> {{ article.views }} views
-                        </small>
-                        <small class="text-muted">{{ article.created_at|date:"M d" }}</small>
+                    <h5 class="font-semibold text-lg">{{ article.title }}</h5>
+                    <p class="text-gray-600">{{ article.excerpt|truncatewords:20 }}</p>
+                    <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
+                        <div><i class="fas fa-eye mr-1"></i>{{ article.views }} views</div>
+                        <div>{{ article.created_at|date:"M d" }}</div>
                     </div>
-                </div>
-                <div class="card-footer bg-transparent">
-                    <div class="d-flex justify-content-between">
-                        <a href="{% url 'main:article_detail' article.slug %}" class="btn btn-primary btn-sm">
-                            Read Article
-                        </a>
+                    <div class="mt-4 flex items-center justify-between">
+                        <a href="{% url 'main:article_detail' article.slug %}" class="bg-indigo-600 text-white px-3 py-2 rounded">Read Article</a>
                         {% if user.is_authenticated %}
-                        <button class="btn btn-outline-secondary btn-sm bookmark-btn" 
-                                data-article-id="{{ article.id }}">
+                        <button class="bookmark-btn text-gray-600" data-article-id="{{ article.id }}" aria-label="bookmark">
                             <i class="fas fa-bookmark"></i>
                         </button>
                         {% endif %}
@@ -98,74 +72,114 @@
         </div>
         {% endfor %}
     </div>
-    
+
+    <!-- Pagination -->
+    <div class="mt-8 flex items-center justify-center">
+        {% if page_obj.has_previous %}
+            <a class="px-3 py-1 border rounded-l" href="?page={{ page_obj.previous_page_number }}{% if current_subject %}&subject={{ current_subject }}{% endif %}{% if current_difficulty %}&difficulty={{ current_difficulty }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+        {% else %}
+            <span class="px-3 py-1 border rounded-l text-gray-400">Previous</span>
+        {% endif %}
+
+        <span class="px-4 py-1 border-t border-b">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a class="px-3 py-1 border rounded-r" href="?page={{ page_obj.next_page_number }}{% if current_subject %}&subject={{ current_subject }}{% endif %}{% if current_difficulty %}&difficulty={{ current_difficulty }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+        {% else %}
+            <span class="px-3 py-1 border rounded-r text-gray-400">Next</span>
+        {% endif %}
+    </div>
+
     {% if not articles %}
-    <div class="text-center py-5">
-        <i class="fas fa-search fa-3x text-muted mb-3"></i>
-        <h4>No articles found</h4>
-        <p class="text-muted">Try adjusting your search criteria</p>
+    <div class="text-center py-12 text-gray-500">
+        <i class="fas fa-search fa-3x mb-3"></i>
+        <h4 class="text-lg font-semibold">No articles found</h4>
+        <p>Try adjusting your search criteria</p>
     </div>
     {% endif %}
 </div>
 
+{% block extra_js %}
+{{ block.super }}
 <script>
-// Real-time search
-let searchTimeout;
-$('#searchInput').on('input', function() {
-    clearTimeout(searchTimeout);
-    const query = $(this).val();
-    
-    if (query.length > 2) {
-        searchTimeout = setTimeout(() => {
-            $.get('/articles/search/', { q: query })
-                .done(function(data) {
-                    const results = $('#searchResults');
-                    results.empty();
-                    
-                    if (data.results.length > 0) {
-                        data.results.forEach(article => {
-                            results.append(`
-                                <div class="search-result-item" onclick="window.location.href='${article.url}'">
-                                    <h6 class="mb-1">${article.title}</h6>
-                                    <small class="text-muted">${article.topic} • ${article.difficulty}</small>
-                                </div>
-                            `);
-                        });
-                        results.show();
-                    } else {
-                        results.hide();
-                    }
-                });
-        }, 300);
-    } else {
-        $('#searchResults').hide();
+// Helper to read CSRF cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
     }
-});
+    return cookieValue;
+}
 
-// Hide search results when clicking outside
-$(document).on('click', function(e) {
-    if (!$(e.target).closest('#searchInput, #searchResults').length) {
-        $('#searchResults').hide();
-    }
-});
+// Real-time search (vanilla JS)
+(() => {
+    const input = document.getElementById('searchInput');
+    const resultsEl = document.getElementById('searchResults');
+    let timeout;
 
-// Bookmark functionality
-$('.bookmark-btn').on('click', function() {
-    const articleId = $(this).data('article-id');
-    const btn = $(this);
-    
-    $.post(`/bookmark/${articleId}/`, {
-        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()
-    })
-    .done(function(data) {
-        if (data.bookmarked) {
-            btn.removeClass('btn-outline-secondary').addClass('btn-warning');
-            btn.find('i').addClass('fas').removeClass('far');
+    if (!input) return;
+
+    input.addEventListener('input', (e) => {
+        clearTimeout(timeout);
+        const q = e.target.value;
+        if (q.length > 2) {
+            timeout = setTimeout(() => {
+                fetch(`/articles/search/?q=${encodeURIComponent(q)}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        resultsEl.innerHTML = '';
+                        if (data.results && data.results.length) {
+                            data.results.forEach(a => {
+                                const div = document.createElement('div');
+                                div.className = 'search-result-item';
+                                div.innerHTML = `<h6 class="mb-1">${a.title}</h6><small class="text-gray-500">${a.topic} • ${a.difficulty}</small>`;
+                                div.addEventListener('click', () => window.location.href = a.url);
+                                resultsEl.appendChild(div);
+                            });
+                            resultsEl.style.display = 'block';
+                        } else {
+                            resultsEl.style.display = 'none';
+                        }
+                    });
+            }, 300);
         } else {
-            btn.removeClass('btn-warning').addClass('btn-outline-secondary');
-            btn.find('i').addClass('far').removeClass('fas');
+            resultsEl.style.display = 'none';
         }
     });
-});
+
+    document.addEventListener('click', (ev) => {
+        if (!ev.target.closest('#searchInput') && !ev.target.closest('#searchResults')) {
+            resultsEl.style.display = 'none';
+        }
+    });
+
+    // Bookmark buttons
+    document.querySelectorAll('.bookmark-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.articleId;
+            fetch(`/bookmark/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.bookmarked) btn.classList.add('text-yellow-500'); else btn.classList.remove('text-yellow-500');
+            });
+        });
+    });
+})();
 </script>
+{% endblock %}
+
 {% endblock %}

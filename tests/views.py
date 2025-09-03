@@ -15,6 +15,13 @@ import io
 from django.contrib.auth.decorators import user_passes_test
 from .forms import MockTestCreateForm
 
+
+def is_student(user):
+    try:
+        return user.userprofile.role == 'student'
+    except Exception:
+        return False
+
 def test_list(request):
     tests = MockTest.objects.filter(is_active=True)
     subjects = Subject.objects.all()
@@ -55,6 +62,7 @@ def test_detail(request, test_id):
     return render(request, 'tests/test_detail.html', context)
 
 @login_required
+@user_passes_test(is_student)
 def start_test(request, test_id):
     test = get_object_or_404(MockTest, id=test_id, is_active=True)
     
@@ -77,6 +85,7 @@ def start_test(request, test_id):
     return redirect('tests:take_test', attempt_id=attempt.id)
 
 @login_required
+@user_passes_test(is_student)
 def take_test(request, attempt_id):
     attempt = get_object_or_404(TestAttempt, id=attempt_id, user=request.user)
     
@@ -99,6 +108,7 @@ def take_test(request, attempt_id):
     return render(request, 'tests/take_test.html', context)
 
 @login_required
+@user_passes_test(is_student)
 @require_POST
 def submit_test(request, attempt_id):
     attempt = get_object_or_404(TestAttempt, id=attempt_id, user=request.user)
@@ -225,6 +235,7 @@ def is_professor(user):
         return user.userprofile.role == 'professor' or user.is_staff
     except Exception:
         return user.is_staff
+
 
 
 @login_required

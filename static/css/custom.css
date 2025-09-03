@@ -1,4 +1,31 @@
 /* Custom site styles */
-body { background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%); }
-.card.professor { border-left: 6px solid #0d6efd; }
+:root {
+	--primary-color: #6c757d; /* grey */
+	--secondary-color: #adb5bd; /* light grey */
+	--dark-color: #343a40;
+	--light-color: #f8f9fa;
+}
+body { background: linear-gradient(180deg, var(--light-color) 0%, #ffffff 100%); }
+.card.professor { border-left: 6px solid var(--primary-color); }
 .profile-avatar { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
+
+.feature-card {
+	border-radius: 12px;
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.feature-card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+.feature-icon { width:70px; height:70px; margin:0 auto; background:var(--secondary-color); color:#fff; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+
+.navbar-brand { color: var(--primary-color) !important; }
+
+/* Small counter style */
+.stat-counter { font-size: 2rem; font-weight: 700; }
+
+/* search results should overlay content */
+.search-results { z-index: 2000; }
+
+/* navbar dropdown caret visibility */
+.navbar .dropdown-toggle::after { color: rgba(255,255,255,0.9); }

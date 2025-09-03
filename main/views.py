@@ -79,7 +79,8 @@ def article_create(request):
     return render(request, 'main/article_create.html', {'form': form})
 
 def article_list(request):
-    articles = Article.objects.filter(is_published=True)
+    from django.core.paginator import Paginator
+    articles_qs = Article.objects.filter(is_published=True)
     subjects = Subject.objects.all()
     difficulties = Article.DIFFICULTY_CHOICES
     
@@ -89,17 +90,24 @@ def article_list(request):
     search_query = request.GET.get('search')
     
     if subject_filter:
-        articles = articles.filter(topic__subject_id=subject_filter)
+        articles_qs = articles_qs.filter(topic__subject_id=subject_filter)
     
     if difficulty_filter:
-        articles = articles.filter(difficulty=difficulty_filter)
+        articles_qs = articles_qs.filter(difficulty=difficulty_filter)
     
     if search_query:
-        articles = articles.filter(
+        articles_qs = articles_qs.filter(
             Q(title__icontains=search_query) | 
             Q(content__icontains=search_query) |
             Q(excerpt__icontains=search_query)
         )
+
+    # Pagination
+    paginator = Paginator(articles_qs, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    articles = page_obj.object_list
     
     context = {
         'articles': articles,
@@ -108,6 +116,7 @@ def article_list(request):
         'current_subject': int(subject_filter) if subject_filter else None,
         'current_difficulty': difficulty_filter,
         'search_query': search_query,
+        'page_obj': page_obj,
     }
     return render(request, 'main/article_list.html', context)
 

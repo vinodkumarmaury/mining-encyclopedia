@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}GATE Mining Prep Platform{% endblock %}</title>
+    {% block extra_meta %}{% endblock %}
     
     {% load static %}
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Animate.css for animations -->
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
     <!-- AOS (Animate On Scroll) CSS -->
@@ -16,7 +15,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Project custom CSS -->
+    <!-- Tailwind build (generated) -->
+    <link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
+    <!-- Project custom CSS (optional overrides) -->
     <link href="{% static 'css/custom.css' %}" rel="stylesheet">
     
     <style>
@@ -161,68 +162,72 @@
         </script>
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'main:home' %}">
-                <i class="fas fa-graduation-cap me-2"></i>GATE Mining Prep
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'main:home' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'main:article_list' %}">Articles</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'tests:test_list' %}">Mock Tests</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'main:subject_list' %}">Subjects</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'tests:leaderboard' %}">Leaderboard</a>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
+    <!-- Navigation (Tailwind + Alpine.js) -->
+    <nav class="bg-indigo-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div x-data="{ open: false, userMenu: false }" class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{% url 'main:home' %}" class="flex items-center space-x-2">
+                        <i class="fas fa-graduation-cap text-xl"></i>
+                        <span class="font-bold text-lg">GATE Mining Prep</span>
+                    </a>
+                    <div class="hidden md:flex md:ml-10 md:space-x-6 ml-6">
+                        <a href="{% url 'main:home' %}" class="hover:underline">Home</a>
+                        <a href="{% url 'main:article_list' %}" class="hover:underline">Articles</a>
+                        <a href="{% url 'tests:test_list' %}" class="hover:underline">Mock Tests</a>
+                        <a href="{% url 'main:subject_list' %}" class="hover:underline">Subjects</a>
+                        <a href="{% url 'tests:leaderboard' %}" class="hover:underline">Leaderboard</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center">
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'main:dashboard' %}">
-                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-1"></i>{{ user.username }}
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
-                                <li><a class="dropdown-item" href="{% url 'analytics:recommendations' %}">Recommendations</a></li>
+                        <a href="{% url 'main:dashboard' %}" class="hidden sm:inline-flex items-center px-3 py-2 bg-indigo-500 rounded-md text-white mr-3">Dashboard</a>
+                        <div class="relative">
+                            <button @click="userMenu = !userMenu" class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-indigo-500">
+                                <i class="fas fa-user"></i>
+                                <span>{{ user.username }}</span>
+                                {% with user.userprofile.role as role %}
+                                    <small class="text-indigo-200">({{ role }})</small>
+                                {% endwith %}
+                            </button>
+                            <div x-show="userMenu" @click.away="userMenu = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-lg py-1 z-50">
+                                <a class="block px-4 py-2 hover:bg-gray-100" href="{% url 'accounts:profile' %}">Profile</a>
+                                <a class="block px-4 py-2 hover:bg-gray-100" href="{% url 'analytics:recommendations' %}">Recommendations</a>
                                 {% if user.is_staff %}
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="{% url 'analytics:dashboard' %}">Analytics</a></li>
-                                    <li><a class="dropdown-item" href="/admin/">Admin Panel</a></li>
+                                    <div class="border-t my-1"></div>
+                                    <a class="block px-4 py-2 hover:bg-gray-100" href="{% url 'analytics:dashboard' %}">Analytics</a>
+                                    <a class="block px-4 py-2 hover:bg-gray-100" href="/admin/">Admin Panel</a>
                                 {% endif %}
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
-                            </ul>
-                        </li>
+                                <div class="border-t my-1"></div>
+                                <a class="block px-4 py-2 hover:bg-gray-100" href="{% url 'accounts:logout' %}">Logout</a>
+                            </div>
+                        </div>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
-                        </li>
+                        <div class="hidden md:flex md:items-center md:space-x-3">
+                            <a href="{% url 'accounts:login' %}" class="px-3 py-2 rounded-md hover:bg-indigo-500">Login</a>
+                            <a href="{% url 'accounts:register' %}" class="px-3 py-2 bg-white text-indigo-600 rounded-md font-medium">Register</a>
+                        </div>
+                        <button @click="open = !open" class="md:hidden p-2 rounded-md hover:bg-indigo-500">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
                     {% endif %}
-                </ul>
+                </div>
+            </div>
+            <!-- Mobile menu -->
+            <div x-show="open" x-cloak class="md:hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="{% url 'main:home' %}" class="block px-3 py-2 rounded-md">Home</a>
+                    <a href="{% url 'main:article_list' %}" class="block px-3 py-2 rounded-md">Articles</a>
+                    <a href="{% url 'tests:test_list' %}" class="block px-3 py-2 rounded-md">Mock Tests</a>
+                    <a href="{% url 'main:subject_list' %}" class="block px-3 py-2 rounded-md">Subjects</a>
+                    <a href="{% url 'tests:leaderboard' %}" class="block px-3 py-2 rounded-md">Leaderboard</a>
+                    <div class="border-t my-2"></div>
+                    <a href="{% url 'accounts:login' %}" class="block px-3 py-2 rounded-md">Login</a>
+                    <a href="{% url 'accounts:register' %}" class="block px-3 py-2 rounded-md">Register</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -270,5 +275,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     {% block extra_js %}{% endblock %}
+        <script>
+            // Ensure dropdowns and tooltips initialize (safe explicit init)
+            document.addEventListener('DOMContentLoaded', function () {
+                if (window.bootstrap) {
+                    var dropdownTriggerList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+                    dropdownTriggerList.forEach(function (el) { new bootstrap.Dropdown(el); });
+
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.forEach(function (el) { new bootstrap.Tooltip(el); });
+                }
+            });
+        </script>
 </body>
 </html>

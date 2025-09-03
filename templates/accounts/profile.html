@@ -3,37 +3,37 @@
 {% block title %}Profile - GATE Mining Prep{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card text-center p-4">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-lg shadow p-6 text-center">
         {% if user_profile.profile_picture %}
-          <img src="{{ user_profile.profile_picture.url }}" class="profile-avatar mb-3">
+          <img src="{{ user_profile.profile_picture.url }}" class="mx-auto w-28 h-28 rounded-full mb-4">
         {% else %}
-          <div class="profile-avatar bg-secondary d-flex align-items-center justify-content-center text-white mb-3">{{ user.username|slice:":1"|upper }}</div>
+          <div class="mx-auto w-28 h-28 rounded-full bg-gray-300 flex items-center justify-center text-2xl text-white mb-4">{{ user.username|slice:":1"|upper }}</div>
         {% endif %}
-        <h5>{{ user.get_full_name|default:user.username }}</h5>
-        <p class="text-muted mb-1">{{ user_profile.college }}</p>
-        <p class="text-muted small">Role: {{ user_profile.get_role_display }}</p>
-        <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary btn-sm mt-2">Edit Profile</a>
+        <h5 class="text-lg font-semibold">{{ user.get_full_name|default:user.username }}</h5>
+        <p class="text-gray-500 mb-1">{{ user_profile.college }}</p>
+        <p class="text-sm text-gray-400">Role: {{ user_profile.get_role_display }}</p>
+        <a href="{% url 'accounts:edit_profile' %}" class="mt-4 inline-block px-4 py-2 border rounded text-indigo-600">Edit Profile</a>
       </div>
     </div>
-    <div class="col-md-8">
-      <div class="card p-3">
-        <h5>Activity</h5>
-        <div id="profileCharts" style="height:220px;"></div>
-        <hr>
-        <h6>Recent Tests</h6>
-        <ul class="list-group">
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h5 class="font-semibold mb-4">Activity</h5>
+        <div id="profileCharts" class="h-56 mb-4"></div>
+        <hr class="my-4">
+        <h6 class="font-semibold mb-2">Recent Tests</h6>
+        <div class="space-y-2">
           {% for t in recent_tests %}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ t.mock_test.title }}
-            <span class="badge bg-primary">{{ t.percentage|floatformat:1 }}%</span>
-          </li>
+          <div class="flex justify-between items-center py-2 border-b">
+            <div>{{ t.mock_test.title }}</div>
+            <div class="text-sm px-2 py-1 rounded {% if t.percentage >= 80 %}bg-green-100 text-green-800{% elif t.percentage >= 60 %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">{{ t.percentage|floatformat:1 }}%</div>
+          </div>
           {% empty %}
-          <li class="list-group-item">No recent tests</li>
+          <div class="py-2 text-gray-500">No recent tests</div>
           {% endfor %}
-        </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -45,11 +45,7 @@ fetch('/analytics/api/performance/')
   .then(data => {
     const ctx = document.createElement('canvas');
     document.getElementById('profileCharts').appendChild(ctx);
-    new Chart(ctx.getContext('2d'), {
-      type: 'line',
-      data: { labels: data.dates, datasets:[{ label:'Score', data:data.scores, borderColor:'#007bff'}] },
-      options: { responsive:true, maintainAspectRatio:false }
-    });
+    new Chart(ctx.getContext('2d'), { type: 'line', data: { labels: data.dates, datasets:[{ label:'Score', data:data.scores, borderColor:'#6366f1'}] }, options: { responsive:true, maintainAspectRatio:false } });
   });
 </script>
 {% endblock %}

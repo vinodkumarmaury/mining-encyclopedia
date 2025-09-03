@@ -6,6 +6,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'gate_prep.settings')
 django.setup()
 
 from django.contrib.auth.models import User
+import argparse
 from main.models import Subject, Topic, Article
 from tests.models import MockTest, Question
 
@@ -71,8 +72,40 @@ def load_sample_data():
                 if created:
                     print(f"Created topic: {topic.name}")
     
-    # Create sample articles
-    admin_user = User.objects.get(username='admin')
+    # Determine author user to assign articles to
+    def get_or_create_author(preferred_username=None):
+        candidates = []
+        if preferred_username:
+            candidates.append(preferred_username)
+        # sensible fallbacks
+        candidates += ['vinod', 'admin', 'superuser', 'root']
+
+        for uname in candidates:
+            u = User.objects.filter(username=uname).first()
+            if u:
+                print(f"Using existing user: {uname}")
+                return u
+
+        # if none found, create a seed user with an unusable password
+        create_name = preferred_username or 'seeduser'
+        user, created = User.objects.get_or_create(
+            username=create_name,
+            defaults={'email': f'{create_name}@example.com'}
+        )
+        if created:
+            user.set_unusable_password()
+            user.is_staff = False
+            user.save()
+            print(f"Created seed user: {create_name} (unusable password)")
+        else:
+            print(f"Using existing fallback user: {create_name}")
+        return user
+
+    # parse optional CLI arg --user
+    parser = argparse.ArgumentParser(description='Load sample data into the project DB')
+    parser.add_argument('--user', help='Username to assign as article author', default=None)
+    args, unknown = parser.parse_known_args()
+    admin_user = get_or_create_author(args.user)
     
     articles_data = [
         {

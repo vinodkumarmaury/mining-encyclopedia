@@ -3,111 +3,94 @@
 {% block title %}Mock Tests - GATE Mining Prep{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h2>Mock Tests</h2>
-            <p class="text-muted">Practice with our comprehensive mock test series</p>
-        </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h2 class="text-2xl font-semibold">Mock Tests</h2>
+        <p class="text-gray-500">Practice with our comprehensive mock test series</p>
     </div>
-    
+
     <!-- Filters -->
-    <div class="row mb-4">
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <form method="GET" class="row g-3">
-                        <div class="col-md-5">
-                            <select name="subject" class="form-select">
-                                <option value="">All Subjects</option>
-                                {% for subject in subjects %}
-                                <option value="{{ subject.id }}" {% if current_subject == subject.id %}selected{% endif %}>
-                                    {{ subject.name }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-5">
-                            <select name="difficulty" class="form-select">
-                                <option value="">All Difficulties</option>
-                                <option value="easy" {% if current_difficulty == 'easy' %}selected{% endif %}>Easy</option>
-                                <option value="medium" {% if current_difficulty == 'medium' %}selected{% endif %}>Medium</option>
-                                <option value="hard" {% if current_difficulty == 'hard' %}selected{% endif %}>Hard</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">Filter</button>
-                        </div>
-                    </form>
+    <div class="mb-6 bg-white rounded-lg shadow p-4">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+            <div class="md:col-span-5">
+                <label class="sr-only">Subject</label>
+                <select name="subject" class="block w-full rounded-md border-gray-200 p-2">
+                    <option value="">All Subjects</option>
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}" {% if current_subject == subject.id %}selected{% endif %}>{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="md:col-span-5">
+                <label class="sr-only">Difficulty</label>
+                <select name="difficulty" class="block w-full rounded-md border-gray-200 p-2">
+                    <option value="">All Difficulties</option>
+                    <option value="easy" {% if current_difficulty == 'easy' %}selected{% endif %}>Easy</option>
+                    <option value="medium" {% if current_difficulty == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="hard" {% if current_difficulty == 'hard' %}selected{% endif %}>Hard</option>
+                </select>
+            </div>
+            <div class="md:col-span-2">
+                <button type="submit" class="w-full bg-indigo-600 text-white px-3 py-2 rounded">Filter</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tests Grid -->
+    <div class="grid gap-6 lg:grid-cols-2">
+        {% for test in tests %}
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="p-5">
+                <div class="flex items-start justify-between mb-3">
+                    <div>
+                        <h3 class="text-lg font-semibold">{{ test.title }}</h3>
+                        <p class="text-sm text-gray-500 mt-1">{{ test.description|truncatewords:18 }}</p>
+                    </div>
+                    <div>
+                        <span class="inline-block px-3 py-1 rounded-full text-sm {% if test.difficulty=='hard' %}bg-red-100 text-red-800{% elif test.difficulty=='medium' %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}">{{ test.get_difficulty_display }}</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-4 text-center text-sm text-gray-600 gap-2 my-4">
+                    <div>
+                        <i class="fas fa-question-circle text-indigo-600"></i>
+                        <div class="font-semibold">{{ test.question_count }}</div>
+                        <div class="text-xs text-gray-400">Questions</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-clock text-yellow-500"></i>
+                        <div class="font-semibold">{{ test.duration_minutes }}m</div>
+                        <div class="text-xs text-gray-400">Duration</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-star text-green-500"></i>
+                        <div class="font-semibold">{{ test.total_marks }}</div>
+                        <div class="text-xs text-gray-400">Marks</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-book text-indigo-400"></i>
+                        <div class="font-semibold">{{ test.subject.name|truncatechars:8 }}</div>
+                        <div class="text-xs text-gray-400">Subject</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Tests Grid -->
-    <div class="row g-4">
-        {% for test in tests %}
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <h5 class="card-title">{{ test.title }}</h5>
-                        <span class="badge bg-{{ test.difficulty|yesno:'danger,warning,success' }}">
-                            {{ test.get_difficulty_display }}
-                        </span>
-                    </div>
-                    
-                    <p class="card-text">{{ test.description|truncatewords:20 }}</p>
-                    
-                    <div class="row text-center mb-3">
-                        <div class="col-3">
-                            <i class="fas fa-question-circle text-primary"></i>
-                            <br><strong>{{ test.question_count }}</strong>
-                            <br><small class="text-muted">Questions</small>
-                        </div>
-                        <div class="col-3">
-                            <i class="fas fa-clock text-warning"></i>
-                            <br><strong>{{ test.duration_minutes }}m</strong>
-                            <br><small class="text-muted">Duration</small>
-                        </div>
-                        <div class="col-3">
-                            <i class="fas fa-star text-success"></i>
-                            <br><strong>{{ test.total_marks }}</strong>
-                            <br><small class="text-muted">Marks</small>
-                        </div>
-                        <div class="col-3">
-                            <i class="fas fa-book text-info"></i>
-                            <br><strong>{{ test.subject.name|truncatechars:8 }}</strong>
-                            <br><small class="text-muted">Subject</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent">
-                    <div class="d-flex justify-content-between">
-                        <a href="{% url 'tests:test_detail' test.id %}" class="btn btn-outline-primary">
-                            View Details
-                        </a>
-                        {% if user.is_authenticated %}
-                        <a href="{% url 'tests:start_test' test.id %}" class="btn btn-primary">
-                            Start Test
-                        </a>
-                        {% else %}
-                        <a href="{% url 'accounts:login' %}" class="btn btn-primary">
-                            Login to Start
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
+            <div class="border-t bg-gray-50 p-4 flex items-center justify-between">
+                <a href="{% url 'tests:test_detail' test.id %}" class="text-indigo-600 hover:underline">View Details</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'tests:start_test' test.id %}" class="bg-indigo-600 text-white px-3 py-2 rounded">Start Test</a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="bg-indigo-600 text-white px-3 py-2 rounded">Login to Start</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
     </div>
-    
+
     {% if not tests %}
-    <div class="text-center py-5">
-        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
-        <h4>No tests found</h4>
-        <p class="text-muted">Try adjusting your filter criteria</p>
+    <div class="text-center py-12">
+        <i class="fas fa-clipboard-list fa-3x text-gray-300 mb-3"></i>
+        <h4 class="text-lg font-semibold">No tests found</h4>
+        <p class="text-gray-500">Try adjusting your filter criteria</p>
     </div>
     {% endif %}
 </div>
